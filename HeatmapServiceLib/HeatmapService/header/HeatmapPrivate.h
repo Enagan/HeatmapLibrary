@@ -1,21 +1,32 @@
 #pragma once
 #include <string>
-#include <memory>
 #include "HeatmapServiceTypes.h"
+#include "CoordinatesMap.h"
 
 namespace heatmap_service
 {
-  class Heatmap;
-
-  HeatmapCoordinate MakeHeatmapCoordinate(double x, double y);
-
-  class HeatmapService
+  struct CounterKeyValue
   {
+    std::string *counter_key;
+    CoordinatesMap *counter_map;
+  };
+
+  class Heatmap
+  {
+  private:
+    double single_unit_width_;
+    double single_unit_height_;
+
+    int amount_of_counters_;
+    CounterKeyValue *counter_glossary_;
+
   public:
-    HeatmapService();
-    HeatmapService(double smallest_spatial_unit_size);
-    HeatmapService(double smallest_spatial_unit_width, double smallest_spatial_unit_height);
-    ~HeatmapService();
+    Heatmap();
+    Heatmap(double smallest_spatial_unit_size);
+    Heatmap(double smallest_spatial_unit_width, double smallest_spatial_unit_height);
+    ~Heatmap();
+
+    bool hasMapForCounter(std::string &counter_key);
 
     void IncrementMapCounter(double coord_x, double coord_y, std::string &counter_key);
     void IncrementMapCounter(HeatmapCoordinate coords, std::string &counter_key);
@@ -32,6 +43,7 @@ namespace heatmap_service
     double Add(double a, double b);
 
   private:
-    std::unique_ptr<Heatmap> pimpl_;
+    CounterKeyValue addNewCounter(std::string &counter_key);
+    CoordinatesMap* getOrAddMapForCounter(std::string &counter_key);
   };
 }

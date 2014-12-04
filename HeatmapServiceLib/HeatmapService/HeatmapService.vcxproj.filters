@@ -2,15 +2,26 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="HeatmapService.h" />
+    <ClInclude Include="header\HeatmapPrivate.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\CoordinatesMap.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="HeatmapServiceTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">
       <UniqueIdentifier>{084a5c64-7396-4e55-b63f-212fd99f91f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="header">
+      <UniqueIdentifier>{f2adc06c-fff2-46ff-84d6-90480ee61a71}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Heatmap.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="HeatmapService.cpp" />
   </ItemGroup>
 </Project>
