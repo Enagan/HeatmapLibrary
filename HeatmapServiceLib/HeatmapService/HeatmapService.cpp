@@ -48,4 +48,9 @@ namespace heatmap_service
   {
     return pimpl_->Add(a,b);
   }
+
+  unsigned int HeatmapService::getCounterAtPosition(double coord_x, double coord_y, std::string &counter_key)
+  {
+    return pimpl_->getCounterAtPosition(coord_x, coord_y, counter_key);
+  }
 }

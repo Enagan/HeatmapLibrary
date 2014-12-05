@@ -42,6 +42,8 @@ namespace heatmap_service
     // LIB TEST
     double Add(double a, double b);
 
+    unsigned int getCounterAtPosition(double coord_x, double coord_y, std::string &counter_key);
+
   private:
     CounterKeyValue addNewCounter(std::string &counter_key);
     CoordinatesMap* getOrAddMapForCounter(std::string &counter_key);

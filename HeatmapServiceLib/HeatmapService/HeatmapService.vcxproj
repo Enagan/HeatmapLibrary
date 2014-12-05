@@ -18,6 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HeatmapService.cpp" />
+    <ClCompile Include="source\CoordinatesMap.cpp" />
     <ClCompile Include="source\Heatmap.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

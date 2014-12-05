@@ -23,5 +23,8 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="HeatmapService.cpp" />
+    <ClCompile Include="source\CoordinatesMap.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

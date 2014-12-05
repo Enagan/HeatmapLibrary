@@ -29,7 +29,7 @@ namespace heatmap_service
     delete(counter_glossary_);
   }
 
-  bool Heatmap::hasMapForCounter(std::string &counter_key)
+  bool Heatmap::hasMapForCounter(std::string& counter_key)
   {
     for (int i = 0; i < amount_of_counters_; i++)
     {
@@ -39,26 +39,26 @@ namespace heatmap_service
     return false;
   }
 
-  void Heatmap::IncrementMapCounter(double coord_x, double coord_y, std::string &counter_key)
+  void Heatmap::IncrementMapCounter(double coord_x, double coord_y, std::string& counter_key)
   {
     IncrementMapCounter({ coord_x, coord_y }, counter_key);
   }
 
-  void Heatmap::IncrementMapCounter(HeatmapCoordinate coords, std::string &counter_key)
+  void Heatmap::IncrementMapCounter(HeatmapCoordinate coords, std::string& counter_key)
   {
     CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
-    map_for_counter->IncrementValueAt(coords);
+    map_for_counter->IncrementValueAt(coords.x,coords.y);
   }
 
-  void Heatmap::IncrementMapCounterByAmount(double coord_x, double coord_y, std::string &counter_key, int add_amount)
+  void Heatmap::IncrementMapCounterByAmount(double coord_x, double coord_y, std::string& counter_key, int add_amount)
   {
     IncrementMapCounterByAmount({ coord_x, coord_y }, counter_key, add_amount);
   }
 
-  void Heatmap::IncrementMapCounterByAmount(HeatmapCoordinate coords, std::string &counter_key, int add_amount)
+  void Heatmap::IncrementMapCounterByAmount(HeatmapCoordinate coords, std::string& counter_key, int add_amount)
   {
     CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
-    map_for_counter->AddAmountAt(coords, add_amount);
+    map_for_counter->AddAmountAt(coords.x, coords.y, add_amount);
   }
 
   void Heatmap::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, std::string counter_keys[], int amounts[], int counter_keys_length)
@@ -85,6 +85,14 @@ namespace heatmap_service
     return a + b;
   }
 
+  unsigned int Heatmap::getCounterAtPosition(double coord_x, double coord_y, std::string &counter_key)
+  {
+    CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
+    return map_for_counter->getValueAt(coord_x, coord_y);
+  }
+
+
+  /// --------- Private ---------
   CounterKeyValue Heatmap::addNewCounter(std::string &counter_key)
   {
     CounterKeyValue *old_glossary = counter_glossary_;
