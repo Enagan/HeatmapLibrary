@@ -46,8 +46,7 @@ namespace heatmap_service
 
   void Heatmap::IncrementMapCounter(HeatmapCoordinate coords, std::string& counter_key)
   {
-    CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
-    map_for_counter->IncrementValueAt(coords.x,coords.y);
+    IncrementMapCounterByAmount(coords, counter_key, 1);
   }
 
   void Heatmap::IncrementMapCounterByAmount(double coord_x, double coord_y, std::string& counter_key, int add_amount)
@@ -58,7 +57,8 @@ namespace heatmap_service
   void Heatmap::IncrementMapCounterByAmount(HeatmapCoordinate coords, std::string& counter_key, int add_amount)
   {
     CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
-    map_for_counter->AddAmountAt(coords.x, coords.y, add_amount);
+    HeatmapCoordinate adjustedCoords = AdjustCoordsToSpatialResolution(coords);
+    map_for_counter->AddAmountAt((int)floor(adjustedCoords.x), (int)floor(adjustedCoords.y), add_amount);
   }
 
   void Heatmap::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, std::string counter_keys[], int amounts[], int counter_keys_length)
@@ -88,11 +88,20 @@ namespace heatmap_service
   unsigned int Heatmap::getCounterAtPosition(double coord_x, double coord_y, std::string &counter_key)
   {
     CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
-    return map_for_counter->getValueAt(coord_x, coord_y);
+    HeatmapCoordinate adjustedCoords = AdjustCoordsToSpatialResolution({ coord_x, coord_y });
+    return map_for_counter->getValueAt(floor(adjustedCoords.x), floor(adjustedCoords.y));
   }
 
 
   /// --------- Private ---------
+  HeatmapCoordinate Heatmap::AdjustCoordsToSpatialResolution(HeatmapCoordinate coords)
+  {
+    HeatmapCoordinate adjustedCoords;
+    adjustedCoords.x = coords.x / single_unit_width_;
+    adjustedCoords.y = coords.y / single_unit_height_;
+    return adjustedCoords;
+  }
+
   CounterKeyValue Heatmap::addNewCounter(std::string &counter_key)
   {
     CounterKeyValue *old_glossary = counter_glossary_;

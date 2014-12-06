@@ -12,14 +12,17 @@ int main(int argc, char* argv[])
 
   clock_t init = clock();
   
-  heatmap_service::HeatmapService* heatmap = new heatmap_service::HeatmapService();
+  heatmap_service::HeatmapService* heatmap = new heatmap_service::HeatmapService(10,10);
 
-  for (long int i = 0; i < 1000000000; i++)
+  for (long int i = 0; i < 1000000; i++)
   {
-    heatmap->IncrementMapCounter({ rand() % 5000, rand() % 5000 }, std::string("deaths"));
+    int randX = rand() % 10000 - 5000;
+    int randY = rand() % 10000 - 5000;
+    //cout << "Registerng { " << randX << " , " << randY << " }" << endl;
+    heatmap->IncrementMapCounter({ randX, randY }, std::string("deaths"));
   }
-
-  cout << "a + b = " << heatmap->getCounterAtPosition(2, 5, std::string("lives")) << endl;
+  
+  cout << "a + b = " << heatmap->getCounterAtPosition(1, 1, std::string("deaths")) << endl;
     
 
   clock_t end = clock();

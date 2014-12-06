@@ -5,7 +5,8 @@ namespace heatmap_service
 
   struct Column
   {
-    int column_length;
+    int col_length;
+    int col_negative_coord_padding;
     uint32_t* column;
   };
 
@@ -14,9 +15,11 @@ namespace heatmap_service
   {
   private:
     const int kInitialMapSize = 1024;
+    const int kInitialNegativeCoordsPadding = 0;
 
-    int matrix_row_length_;
-    Column* accumulator_matrix_;
+    int map_columns_length_;
+    int map_columns_negative_coord_padding;
+    Column* map_columns;
 
   public:
     CoordinatesMap();
@@ -33,8 +36,11 @@ namespace heatmap_service
     void InitializeMap();
     void DestroyMap();
 
-    void ResizeRows();
-    void ResizeColumn(int coord_x);
+    void AddColumns();
+    void InsertColumnsAtBeggining();
+
+    void GrowColumnAtEnd(unsigned int adjusted_coord_x);
+    void GrowColumnAtBeggining(unsigned int adjusted_coord_x);
 
   };
 }

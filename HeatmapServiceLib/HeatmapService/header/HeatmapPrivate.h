@@ -45,6 +45,8 @@ namespace heatmap_service
     unsigned int getCounterAtPosition(double coord_x, double coord_y, std::string &counter_key);
 
   private:
+    HeatmapCoordinate AdjustCoordsToSpatialResolution(HeatmapCoordinate coords);
+
     CounterKeyValue addNewCounter(std::string &counter_key);
     CoordinatesMap* getOrAddMapForCounter(std::string &counter_key);
   };
