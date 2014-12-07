@@ -32,6 +32,12 @@ namespace heatmap_service
     double Add(double a, double b);
 
     unsigned int getCounterAtPosition(double coord_x, double coord_y, std::string &counter_key);
+    unsigned int getCounterAtPosition(HeatmapCoordinate coords, std::string &counter_key);
+
+    bool getCounterDataInsideRect(double lower_coord_x, double lower_coord_y, double upper_coord_x, double upper_coord_y, std::string &counter_key, HeatmapData &out_data);
+    bool getCounterDataInsideRect(HeatmapCoordinate lower_left, HeatmapCoordinate upper_right, std::string &counter_key, HeatmapData &out_data);
+
+    bool getAllCounterData(std::string &counter_key, HeatmapData &out_data);
 
   private:
     std::unique_ptr<Heatmap> pimpl_;

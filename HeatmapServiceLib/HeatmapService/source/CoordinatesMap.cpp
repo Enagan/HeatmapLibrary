@@ -3,6 +3,7 @@
 
 namespace heatmap_service
 {
+  // --------- Public Methods ------------ 
   CoordinatesMap::CoordinatesMap()
   {
     map_columns = NULL;
@@ -34,7 +35,10 @@ namespace heatmap_service
       GrowColumnAtBeggining(adjusted_coord_x);
 
     int adjusted_coord_y = coord_y + map_columns[adjusted_coord_x].col_negative_coord_padding;
+
     map_columns[adjusted_coord_x].column[adjusted_coord_y] += amount;
+
+    CheckIfNewBoundary(coord_x, coord_y);
   }
 
   uint32_t CoordinatesMap::getValueAt(int coord_x, int coord_y)
@@ -49,6 +53,23 @@ namespace heatmap_service
     return map_columns[adjusted_coord_x].column[adjusted_coord_y];
   }
 
+  int CoordinatesMap::lowest_coord_x()
+  {
+    return lowest_coord_x_;
+  }
+  int CoordinatesMap::highest_coord_x()
+  {
+    return highest_coord_x_;
+  }
+  int CoordinatesMap::lowest_coord_y()
+  {
+    return lowest_coord_y_;
+  }
+  int CoordinatesMap::highest_coord_y()
+  {
+    return highest_coord_y_;
+  }
+
   void CoordinatesMap::ClearMap()
   {
     DestroyMap();
@@ -60,6 +81,11 @@ namespace heatmap_service
   {
     if (map_columns != NULL)
       DestroyMap();
+
+    lowest_coord_x_ = 0;
+    highest_coord_x_ = 0;
+    lowest_coord_y_ = 0;
+    highest_coord_y_ = 0;
 
     map_columns_length_ = kInitialMapSize;
     map_columns_negative_coord_padding = kInitialNegativeCoordsPadding;
@@ -166,5 +192,20 @@ namespace heatmap_service
 
     map_columns[adjusted_coord_x].col_negative_coord_padding += map_columns[adjusted_coord_x].col_length;
     map_columns[adjusted_coord_x].col_length = new_length;
+  }
+
+  void CoordinatesMap::CheckIfNewBoundary(int coord_x, int coord_y)
+  {
+    if (coord_x < lowest_coord_x_)
+      lowest_coord_x_ = coord_x;
+
+    if (coord_y < lowest_coord_y_)
+      lowest_coord_y_ = coord_y;
+
+    if (coord_x > highest_coord_x_)
+      highest_coord_x_ = coord_x;
+
+    if (coord_y > highest_coord_y_)
+      highest_coord_y_ = coord_y;
   }
 }

@@ -21,6 +21,10 @@ namespace heatmap_service
     int map_columns_negative_coord_padding;
     Column* map_columns;
 
+    int lowest_coord_x_;
+    int highest_coord_x_;
+    int lowest_coord_y_;
+    int highest_coord_y_;
   public:
     CoordinatesMap();
     ~CoordinatesMap();
@@ -29,6 +33,10 @@ namespace heatmap_service
     void AddAmountAt(int coord_x, int coord_y, int amount);
 
     uint32_t getValueAt(int coord_x, int coord_y);
+    int lowest_coord_x();
+    int highest_coord_x();
+    int lowest_coord_y();
+    int highest_coord_y();
 
     void ClearMap();
 
@@ -42,5 +50,6 @@ namespace heatmap_service
     void GrowColumnAtEnd(unsigned int adjusted_coord_x);
     void GrowColumnAtBeggining(unsigned int adjusted_coord_x);
 
+    void CheckIfNewBoundary(int coord_x, int coord_y);
   };
 }

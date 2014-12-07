@@ -39,6 +39,16 @@ namespace heatmap_service
     return false;
   }
 
+  double Heatmap::single_unit_height()
+  {
+    return single_unit_height_;
+  }
+
+  double Heatmap::single_unit_width()
+  {
+    return single_unit_width_;
+  }
+
   void Heatmap::IncrementMapCounter(double coord_x, double coord_y, std::string& counter_key)
   {
     IncrementMapCounter({ coord_x, coord_y }, counter_key);
@@ -58,7 +68,7 @@ namespace heatmap_service
   {
     CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
     HeatmapCoordinate adjustedCoords = AdjustCoordsToSpatialResolution(coords);
-    map_for_counter->AddAmountAt((int)floor(adjustedCoords.x), (int)floor(adjustedCoords.y), add_amount);
+    map_for_counter->AddAmountAt((int)adjustedCoords.x, (int)adjustedCoords.y, add_amount);
   }
 
   void Heatmap::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, std::string counter_keys[], int amounts[], int counter_keys_length)
@@ -87,19 +97,76 @@ namespace heatmap_service
 
   unsigned int Heatmap::getCounterAtPosition(double coord_x, double coord_y, std::string &counter_key)
   {
+    return getCounterAtPosition({ coord_x, coord_y }, counter_key);
+  }
+
+  unsigned int Heatmap::getCounterAtPosition(HeatmapCoordinate coords, std::string &counter_key)
+  {
+    if (!ContainsCounterForKey(counter_key))
+      return 0;
+
     CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
-    HeatmapCoordinate adjustedCoords = AdjustCoordsToSpatialResolution({ coord_x, coord_y });
-    return map_for_counter->getValueAt(floor(adjustedCoords.x), floor(adjustedCoords.y));
+    HeatmapCoordinate adjusted_coords = AdjustCoordsToSpatialResolution(coords);
+    return map_for_counter->getValueAt((int)adjusted_coords.x, (int)adjusted_coords.y);
+  }
+
+  bool Heatmap::getCounterDataInsideRect(double lower_coord_x, double lower_coord_y, double upper_coord_x, double upper_coord_y, std::string &counter_key, HeatmapData &out_data)
+  {
+    return getCounterDataInsideRect({ lower_coord_x, lower_coord_y }, { upper_coord_x, upper_coord_y }, counter_key, out_data);
+  }
+
+  bool Heatmap::getCounterDataInsideRect(HeatmapCoordinate lower_left, HeatmapCoordinate upper_right, std::string &counter_key, HeatmapData &out_data)
+  {
+    if (!ContainsCounterForKey(counter_key))
+      return false;
+
+    CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
+
+    HeatmapCoordinate adjusted_lower_left = AdjustCoordsToSpatialResolution(lower_left);
+    HeatmapCoordinate adjusted_upper_right = AdjustCoordsToSpatialResolution(upper_right);
+    int width = (int)adjusted_upper_right.x - (int)adjusted_lower_left.x + 1;
+    int height = (int)adjusted_upper_right.y - (int)adjusted_lower_left.y + 1;
+
+    out_data.counter_name = std::string(counter_key);
+    out_data.lower_left_coordinate = adjusted_lower_left;
+    out_data.spatial_resolution = { single_unit_width_, single_unit_height_ };
+    out_data.data_size = { width, height };
+    out_data.heatmap_data = new uint32_t*[width];
+    for (int i = 0; i < width; i++)
+    {
+      out_data.heatmap_data[i] = new uint32_t[height]();
+    }
+
+    for (int x = 0; x < width; x++)
+    {
+      for (int y = 0; y < height; y++)
+      {
+        out_data.heatmap_data[x][y] = map_for_counter->getValueAt(adjusted_lower_left.x + x, adjusted_lower_left.y + y);
+      }
+    }
+
+    return true;
+  }
+
+  bool Heatmap::getAllCounterData(std::string &counter_key, HeatmapData &out_data)
+  {
+    if (!ContainsCounterForKey(counter_key))
+      return false;
+
+    CoordinatesMap* map_for_counter = getOrAddMapForCounter(counter_key);
+
+    return getCounterDataInsideRect(map_for_counter->lowest_coord_x(), map_for_counter->lowest_coord_y(),
+      map_for_counter->highest_coord_x(), map_for_counter->highest_coord_y(), counter_key, out_data);
   }
 
 
   /// --------- Private ---------
   HeatmapCoordinate Heatmap::AdjustCoordsToSpatialResolution(HeatmapCoordinate coords)
   {
-    HeatmapCoordinate adjustedCoords;
-    adjustedCoords.x = coords.x / single_unit_width_;
-    adjustedCoords.y = coords.y / single_unit_height_;
-    return adjustedCoords;
+    HeatmapCoordinate adjusted_coords;
+    adjusted_coords.x = floor(coords.x / single_unit_width_);
+    adjusted_coords.y = floor(coords.y / single_unit_height_);
+    return adjusted_coords;
   }
 
   CounterKeyValue Heatmap::addNewCounter(std::string &counter_key)
@@ -129,5 +196,16 @@ namespace heatmap_service
     }
 
     return addNewCounter(counter_key).counter_map;
+  }
+
+  bool Heatmap::ContainsCounterForKey(std::string &counter_key)
+  {
+    for (int i = 0; i < amount_of_counters_; i++)
+    {
+      if (counter_glossary_[i].counter_key->compare(counter_key) == 0)
+        return true;
+    }
+
+    return false;
   }
 }

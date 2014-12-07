@@ -6,4 +6,21 @@ namespace heatmap_service
     double x;
     double y;
   };
+
+  struct HeatmapSize
+  {
+    double width;
+    double height;
+  };
+
+  struct HeatmapData
+  {
+    std::string counter_name;
+
+    HeatmapCoordinate lower_left_coordinate;
+    HeatmapSize spatial_resolution;
+
+    HeatmapSize data_size;
+    unsigned int **heatmap_data;
+  };
 }

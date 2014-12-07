@@ -53,4 +53,24 @@ namespace heatmap_service
   {
     return pimpl_->getCounterAtPosition(coord_x, coord_y, counter_key);
   }
+
+  unsigned int HeatmapService::getCounterAtPosition(HeatmapCoordinate coords, std::string &counter_key)
+  {
+    return pimpl_->getCounterAtPosition(coords, counter_key);
+  }
+
+  bool HeatmapService::getCounterDataInsideRect(double lower_coord_x, double lower_coord_y, double upper_coord_x, double upper_coord_y, std::string &counter_key, HeatmapData &out_data)
+  {
+    return pimpl_->getCounterDataInsideRect(lower_coord_x, lower_coord_y, upper_coord_x, upper_coord_y, counter_key, out_data);
+  }
+
+  bool HeatmapService::getCounterDataInsideRect(HeatmapCoordinate lower_left, HeatmapCoordinate upper_right, std::string &counter_key, HeatmapData &out_data)
+  {
+    return pimpl_->getCounterDataInsideRect(lower_left, upper_right, counter_key, out_data);
+  }
+
+  bool HeatmapService::getAllCounterData(std::string &counter_key, HeatmapData &out_data)
+  {
+    return pimpl_->getAllCounterData(counter_key, out_data);
+  }
 }
