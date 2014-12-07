@@ -9,6 +9,16 @@ namespace heatmap_service
                                  double smallest_spatial_unit_height) : pimpl_(new Heatmap(smallest_spatial_unit_width, smallest_spatial_unit_height)){}
   HeatmapService::~HeatmapService(){}
 
+  double HeatmapService::single_unit_height()
+  {
+    return pimpl_->single_unit_height();
+  }
+
+  double HeatmapService::single_unit_width()
+  {
+    return pimpl_->single_unit_width();
+  }
+
   void HeatmapService::IncrementMapCounter(double coord_x, double coord_y, std::string &counter_key)
   {
     pimpl_->IncrementMapCounter(coord_x, coord_y, counter_key);
@@ -34,13 +44,13 @@ namespace heatmap_service
     pimpl_->IncrementMultipleMapCountersByAmount(coords, counter_keys, amounts, counter_keys_length);
   }
 
-  bool HeatmapService::SerializeHeatmap(char* &out_buffer)
+  bool HeatmapService::SerializeHeatmap(char* &out_buffer, int &out_length)
   {
-    return pimpl_->SerializeHeatmap(out_buffer);
+    return pimpl_->SerializeHeatmap(out_buffer, out_length);
   }
-  bool HeatmapService::DeserializeHeatmap(char* &in_buffer)
+  bool HeatmapService::DeserializeHeatmap(const char* &in_buffer, int in_length)
   {
-    return pimpl_->DeserializeHeatmap(in_buffer);
+    return pimpl_->DeserializeHeatmap(in_buffer, in_length);
   }
 
     // LIB TEST

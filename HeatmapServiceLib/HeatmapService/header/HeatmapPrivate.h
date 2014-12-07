@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "HeatmapServiceTypes.h"
-#include "CoordinatesMap.h"
+#include "CoordinatesMap.hpp"
 
 namespace heatmap_service
 {
@@ -38,8 +38,8 @@ namespace heatmap_service
 
     void IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, std::string counter_keys[], int amounts[], int counter_keys_length);
 
-    bool SerializeHeatmap(char* &out_buffer);
-    bool DeserializeHeatmap(char* &in_buffer);
+    bool SerializeHeatmap(char* &out_buffer, int &out_length);
+    bool DeserializeHeatmap(const char* &in_buffer, int in_length);
 
     // LIB TEST
     double Add(double a, double b);
@@ -58,5 +58,7 @@ namespace heatmap_service
     CounterKeyValue addNewCounter(std::string &counter_key);
     CoordinatesMap* getOrAddMapForCounter(std::string &counter_key);
     bool ContainsCounterForKey(std::string &counter_key);
+
+    void DestroyHeatmap();
   };
 }

@@ -20,21 +20,27 @@ namespace heatmap_service
   }
   void CoordinatesMap::AddAmountAt(int coord_x, int coord_y, int amount)
   {
-    while (coord_x + map_columns_negative_coord_padding >= map_columns_length_)
-      AddColumns();
+    int adjusted_coord_x, adjusted_coord_y;
+    try {
+      while (coord_x + map_columns_negative_coord_padding >= map_columns_length_)
+        AddColumns();
+      while (coord_x + map_columns_negative_coord_padding < 0)
+        InsertColumnsAtBeggining();
 
-    while (coord_x + map_columns_negative_coord_padding < 0)
-      InsertColumnsAtBeggining();
+      adjusted_coord_x = coord_x + map_columns_negative_coord_padding;
 
-    int adjusted_coord_x = coord_x + map_columns_negative_coord_padding;
+      while (coord_y + map_columns[adjusted_coord_x].col_negative_coord_padding >= map_columns[adjusted_coord_x].col_length)
+        GrowColumnAtEnd(adjusted_coord_x);
+      while (coord_y + map_columns[adjusted_coord_x].col_negative_coord_padding < 0)
+        GrowColumnAtBeggining(adjusted_coord_x);
+    }
+    catch (const std::bad_alloc& e) {
+      std::cout << "[HEATMAP_SERVICE] ERROR: Could not register counter for coordinate { " << coord_x << " , " << coord_y << " }. Reason: \"" << e.what() << "\". Map may be too big to maintain" << std::endl;
+      return;
+    }
 
-    while (coord_y + map_columns[adjusted_coord_x].col_negative_coord_padding >= map_columns[adjusted_coord_x].col_length)
-      GrowColumnAtEnd(adjusted_coord_x);
-
-    while (map_columns[adjusted_coord_x].col_negative_coord_padding + coord_y < 0)
-      GrowColumnAtBeggining(adjusted_coord_x);
-
-    int adjusted_coord_y = coord_y + map_columns[adjusted_coord_x].col_negative_coord_padding;
+    adjusted_coord_x = coord_x + map_columns_negative_coord_padding;
+    adjusted_coord_y = coord_y + map_columns[adjusted_coord_x].col_negative_coord_padding;
 
     map_columns[adjusted_coord_x].column[adjusted_coord_y] += amount;
 

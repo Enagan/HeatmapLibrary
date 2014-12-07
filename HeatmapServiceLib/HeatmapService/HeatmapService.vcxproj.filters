@@ -5,10 +5,10 @@
     <ClInclude Include="header\HeatmapPrivate.h">
       <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="header\CoordinatesMap.h">
+    <ClInclude Include="HeatmapServiceTypes.h" />
+    <ClInclude Include="header\CoordinatesMap.hpp">
       <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="HeatmapServiceTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">

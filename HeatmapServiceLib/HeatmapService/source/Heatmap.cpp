@@ -1,4 +1,11 @@
 #include "HeatmapPrivate.h"
+#include <string.h>
+
+// Boost headers for Serialization
+#include <boost\iostreams\stream.hpp>
+#include <boost\iostreams\device\back_inserter.hpp>
+#include <boost\archive\binary_oarchive.hpp>
+#include <boost\archive\binary_iarchive.hpp>
 
 namespace heatmap_service
 {
@@ -20,13 +27,7 @@ namespace heatmap_service
 
   Heatmap::~Heatmap()
   {
-    for (int i = 0; i < amount_of_counters_; i++)
-    {
-      delete(counter_glossary_[i].counter_key);
-      delete(counter_glossary_[i].counter_map);
-    }
-    
-    delete(counter_glossary_);
+    DestroyHeatmap();
   }
 
   bool Heatmap::hasMapForCounter(std::string& counter_key)
@@ -79,13 +80,60 @@ namespace heatmap_service
     }
   }
 
-  bool Heatmap::SerializeHeatmap(char* &out_buffer)
+  bool Heatmap::SerializeHeatmap(char* &out_buffer, int &out_length)
   {
+    // First we set a boost stream writting to a std::string
+    std::string serial_str;
+    boost::iostreams::back_insert_device<std::string> buffer_destination(serial_str);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > stream(buffer_destination);
+    boost::archive::binary_oarchive oa(stream);
+
+    // We write the class values to the string, through the stream
+    oa << single_unit_width_;
+    oa << single_unit_height_;
+    oa << amount_of_counters_;
+
+    for (int i = 0; i < amount_of_counters_; i++)
+    {
+      oa & *(counter_glossary_[i].counter_key);
+      oa & counter_glossary_[i].counter_map;
+    }
+
+    // flush when done writting
+    stream.flush();
+
+    // Write the data contained in the std::string to a regular char* buffer
+    char * writable = new char[serial_str.size()];
+    memcpy_s(writable, serial_str.size(), serial_str.data(), serial_str.size());
+
+    // Return the data
+    out_buffer = writable;
+    out_length = serial_str.size();
+
     return true;
   }
 
-  bool Heatmap::DeserializeHeatmap(char* &in_buffer)
+  bool Heatmap::DeserializeHeatmap(const char* &in_buffer, int in_length)
   {
+    DestroyHeatmap();
+    
+    // wrap buffer inside a stream for deserialization
+    boost::iostreams::basic_array_source<char> buffer_source(in_buffer, in_length);
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > stream(buffer_source);
+    boost::archive::binary_iarchive ia(stream);
+
+    ia >> single_unit_width_;
+    ia >> single_unit_height_;
+    ia >> amount_of_counters_;
+
+    counter_glossary_ = new CounterKeyValue[amount_of_counters_];
+    std::string temp_string;
+    for (int i = 0; i < amount_of_counters_; i++)
+    {
+      ia & temp_string;
+      counter_glossary_[i].counter_key = new std::string(temp_string);
+      ia & counter_glossary_[i].counter_map;
+    }
     return true;
   }
 
@@ -207,5 +255,17 @@ namespace heatmap_service
     }
 
     return false;
+  }
+
+  void Heatmap::DestroyHeatmap()
+  {
+    for (int i = 0; i < amount_of_counters_; i++)
+    {
+      delete(counter_glossary_[i].counter_key);
+      delete(counter_glossary_[i].counter_map);
+    }
+
+    delete(counter_glossary_);
+    counter_glossary_ = NULL;
   }
 }

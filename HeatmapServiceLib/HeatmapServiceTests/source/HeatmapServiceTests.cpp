@@ -3,6 +3,7 @@
 #include <ctime>
 #include "HeatmapService.h"
 
+
 using namespace std;
 
 void DumpHeatmapData(heatmap_service::HeatmapData &data)
@@ -14,7 +15,7 @@ void DumpHeatmapData(heatmap_service::HeatmapData &data)
 
     for (int x = 0; x < data.data_size.width; x++)
     {
-      cout << " " << data.heatmap_data[x][y];
+      cout << "  " << data.heatmap_data[x][y];
     }
     cout << endl;
   }
@@ -29,19 +30,44 @@ int main(int argc, char* argv[])
   clock_t init = clock();
   
   heatmap_service::HeatmapService* heatmap = new heatmap_service::HeatmapService(0.5);
+  heatmap_service::HeatmapService* heatmap_2 = new heatmap_service::HeatmapService(1);
 
-  for (long int i = 0; i < 1000000; i++)
+  heatmap->IncrementMapCounter({ 0, 0 }, std::string("deaths"));
+  heatmap->IncrementMapCounter({ 0, 0 }, std::string("deaths"));
+  heatmap->IncrementMapCounter({ -1, 0 }, std::string("deaths"));
+  heatmap->IncrementMapCounter({ -1, -1 }, std::string("deaths"));
+
+  heatmap->IncrementMapCounter({ 1, 0 }, std::string("deaths"));
+  heatmap->IncrementMapCounter({ 1, 0 }, std::string("deaths"));
+
+  heatmap->IncrementMapCounter({ 1, 2 }, std::string("deaths"));
+
+  char* serialized_hm1; 
+  const char* const_serialized;
+  int buffer_size;
+
+  if (heatmap->SerializeHeatmap(serialized_hm1, buffer_size))
+  {
+    delete(heatmap);
+    const_serialized = serialized_hm1;
+    //cout << serialized_hm1[0] << endl;
+    heatmap_2->DeserializeHeatmap(const_serialized, buffer_size);
+  }
+
+  cout << "Results are : " << heatmap_2->single_unit_width() << " , " << heatmap_2->single_unit_height() << endl;
+  cout << "probing deaths at 0,0 : " << heatmap_2->getCounterAtPosition({ 1, 2 },std::string("deaths")) << endl;
+  /*for (long int i = 0; i < 1000000; i++)
   {
     int randX = rand() % 10000 - 5000;
     int randY = rand() % 10000 - 5000;
-    //cout << "Registerng { " << randX << " , " << randY << " }" << endl;
+    //cout << "Registering { " << randX << " , " << randY << " }" << endl;
     heatmap->IncrementMapCounter({ randX, randY }, std::string("deaths"));
-  }
+  }*/
  
 
   heatmap_service::HeatmapData data;
 
-  if (heatmap->getCounterDataInsideRect({ 0, 0 }, { 100, 100 }, std::string("deaths"), data))
+  if (heatmap_2->getAllCounterData(std::string("deaths"), data))
   {
     DumpHeatmapData(data);
   }
@@ -54,7 +80,7 @@ int main(int argc, char* argv[])
     "..... took " << (diff / CLOCKS_PER_SEC) << " seconds ....." << endl <<
     "... Press Enter to close ..." << endl;
 
-  delete(heatmap);
+  delete(heatmap_2);
 
   cin.get();
 
