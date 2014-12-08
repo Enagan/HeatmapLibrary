@@ -4,7 +4,9 @@
 ////////////////////////////////////////////////////////////////////////
 
 #pragma once
+
 #include <string>
+
 #include "HeatmapServiceTypes.h"
 #include "CounterMap.hpp"
 
