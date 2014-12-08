@@ -189,7 +189,7 @@ namespace heatmap_service
     {
       for (int y = 0; y < height; y++)
       {
-        out_data.heatmap_data[x][y] = map_for_counter->getValueAt(adjusted_lower_left.x + x, adjusted_lower_left.y + y);
+        out_data.heatmap_data[x][y] = map_for_counter->getValueAt((int)adjusted_lower_left.x + x, (int)adjusted_lower_left.y + y);
       }
     }
 
