@@ -67,7 +67,8 @@ namespace heatmap_service
     bool getCounterDataInsideRect(double lower_coord_x, double lower_coord_y, double upper_coord_x, double upper_coord_y, const std::string &counter_key, HeatmapData &out_data);
     bool getCounterDataInsideRect(HeatmapCoordinate lower_left, HeatmapCoordinate upper_right, const std::string &counter_key, HeatmapData &out_data);
 
-    // These method behaves similarly to the area queries, but returns the entirety of the map data for the given counter
+    // These method behaves similarly to the area queries, but returns the entirety of the currently registered map data for the given counter
+    // The counter value for any coordinate outside the area returned by this function is 0
     bool getAllCounterData(const std::string &counter_key, HeatmapData &out_data);
 
 

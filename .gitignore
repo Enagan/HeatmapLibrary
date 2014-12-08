@@ -39,3 +39,9 @@ HeatmapServiceLib/Debug/
 HeatmapServiceLib/Release/
 HeatmapServiceLib/HeatmapService/Debug/
 HeatmapServiceLib/HeatmapService/Release/
+
+#Commit the pruned Boost libs
+!libboost_iostreams-vc120-mt-1_57.lib
+!libboost_iostreams-vc120-mt-gd-1_57.lib
+!libboost_serialization-vc120-mt-1_57.lib
+!libboost_serialization-vc120-mt-gd-1_57.lib
