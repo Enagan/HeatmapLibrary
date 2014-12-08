@@ -40,8 +40,8 @@ namespace heatmap_service
     CoordinatesMap();
     ~CoordinatesMap();
 
-    void IncrementValueAt(int coord_x, int coord_y);
-    void AddAmountAt(int coord_x, int coord_y, int amount);
+    bool IncrementValueAt(int coord_x, int coord_y);
+    bool AddAmountAt(int coord_x, int coord_y, int amount);
 
     uint32_t getValueAt(int coord_x, int coord_y);
     int lowest_coord_x();

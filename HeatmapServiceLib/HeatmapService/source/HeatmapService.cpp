@@ -1,3 +1,8 @@
+////////////////////////////////////////////////////////////////////////
+// HeatmapService.cpp: API for use of the HeatmapService Library
+// Written by: Pedro Engana (http://pedroengana.com) 
+////////////////////////////////////////////////////////////////////////
+
 #include "HeatmapService.h"
 #include "HeatmapPrivate.h"
 
@@ -27,53 +32,33 @@ namespace heatmap_service
   }
 
   // -- Counter queries
-  bool HeatmapService::hasMapForCounter(const char* &counter_key)
-  {
-    return private_heatmap_->hasMapForCounter(counter_key);
-  }
   bool HeatmapService::hasMapForCounter(const std::string &counter_key)
   {
     return private_heatmap_->hasMapForCounter(counter_key);
   }
 
   // -- Heatmap activity logging methods
-  bool HeatmapService::IncrementMapCounter(double coord_x, double coord_y, const char* &counter_key)
-  {
-    return private_heatmap_->IncrementMapCounter(coord_x, coord_y, counter_key);
-  }
   bool HeatmapService::IncrementMapCounter(double coord_x, double coord_y, const std::string &counter_key)
   {
     return private_heatmap_->IncrementMapCounter(coord_x, coord_y, counter_key);
   }
 
-  bool HeatmapService::IncrementMapCounter(HeatmapCoordinate coords, const char* &counter_key)
-  {
-    return private_heatmap_->IncrementMapCounter(coords, counter_key);
-  }
   bool HeatmapService::IncrementMapCounter(HeatmapCoordinate coords, const std::string &counter_key)
   {
     return private_heatmap_->IncrementMapCounter(coords, counter_key);
   }
 
-  bool HeatmapService::IncrementMapCounterByAmount(double coord_x, double coord_y, const char* &counter_key, unsigned int add_amount)
-  {
-    return private_heatmap_->IncrementMapCounterByAmount(coord_x, coord_y, counter_key, add_amount);
-  }
   bool HeatmapService::IncrementMapCounterByAmount(double coord_x, double coord_y, const std::string &counter_key, unsigned int add_amount)
   {
     return private_heatmap_->IncrementMapCounterByAmount(coord_x, coord_y, counter_key, add_amount);
   }
 
-  bool HeatmapService::IncrementMapCounterByAmount(HeatmapCoordinate coords, const char* &counter_key, unsigned int add_amount)
-  {
-    return private_heatmap_->IncrementMapCounterByAmount(coords, counter_key, add_amount);
-  }
   bool HeatmapService::IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, unsigned int add_amount)
   {
     return private_heatmap_->IncrementMapCounterByAmount(coords, counter_key, add_amount);
   }
 
-  bool HeatmapService::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const char* counter_keys[], unsigned int amounts[], int counter_keys_length)
+  bool HeatmapService::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], unsigned int amounts[], int counter_keys_length)
   {
     return private_heatmap_->IncrementMultipleMapCountersByAmount(coords, counter_keys, amounts, counter_keys_length);
   }

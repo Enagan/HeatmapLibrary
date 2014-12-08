@@ -14,11 +14,12 @@ namespace heatmap_service
     DestroyMap();
   }
 
-  void CoordinatesMap::IncrementValueAt(int coord_x, int coord_y)
+  bool CoordinatesMap::IncrementValueAt(int coord_x, int coord_y)
   {
-    AddAmountAt(coord_x, coord_y, 1);
+    return AddAmountAt(coord_x, coord_y, 1);
   }
-  void CoordinatesMap::AddAmountAt(int coord_x, int coord_y, int amount)
+
+  bool CoordinatesMap::AddAmountAt(int coord_x, int coord_y, int amount)
   {
     int adjusted_coord_x, adjusted_coord_y;
     try {
@@ -36,7 +37,7 @@ namespace heatmap_service
     }
     catch (const std::bad_alloc& e) {
       std::cout << "[HEATMAP_SERVICE] ERROR: Could not register counter for coordinate { " << coord_x << " , " << coord_y << " }. Reason: \"" << e.what() << "\". Map may be too big to maintain" << std::endl;
-      return;
+      return false;
     }
 
     adjusted_coord_x = coord_x + map_columns_negative_coord_padding;
@@ -45,6 +46,7 @@ namespace heatmap_service
     map_columns[adjusted_coord_x].column[adjusted_coord_y] += amount;
 
     CheckIfNewBoundary(coord_x, coord_y);
+    return true;
   }
 
   uint32_t CoordinatesMap::getValueAt(int coord_x, int coord_y)

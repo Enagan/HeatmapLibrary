@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 
   clock_t init = clock();
   
-  heatmap_service::HeatmapService* heatmap = new heatmap_service::HeatmapService(0.5);
+  heatmap_service::HeatmapService* heatmap = new heatmap_service::HeatmapService(1);
   heatmap_service::HeatmapService* heatmap_2 = new heatmap_service::HeatmapService(1);
 
   heatmap->IncrementMapCounter({ 0, 0 }, std::string("deaths"));
