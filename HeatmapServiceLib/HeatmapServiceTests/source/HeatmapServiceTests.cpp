@@ -32,15 +32,15 @@ int main(int argc, char* argv[])
   heatmap_service::HeatmapService* heatmap = new heatmap_service::HeatmapService(1);
   heatmap_service::HeatmapService* heatmap_2 = new heatmap_service::HeatmapService(1);
 
-  heatmap->IncrementMapCounter({ 0, 0 }, std::string("deaths"));
-  heatmap->IncrementMapCounter({ 0, 0 }, std::string("deaths"));
-  heatmap->IncrementMapCounter({ -1, 0 }, std::string("deaths"));
-  heatmap->IncrementMapCounter({ -1, -1 }, std::string("deaths"));
+  heatmap->IncrementMapCounter({ 0, 0 }, "deaths");
+  heatmap->IncrementMapCounter({ 0, 0 }, "deaths");
+  heatmap->IncrementMapCounter({ -1, 0 }, "deaths");
+  heatmap->IncrementMapCounter({ -1, -1 }, "deaths");
 
-  heatmap->IncrementMapCounter({ 1, 0 }, std::string("deaths"));
-  heatmap->IncrementMapCounter({ 1, 0 }, std::string("deaths"));
+  heatmap->IncrementMapCounter({ 1, 0 }, "deaths");
+  heatmap->IncrementMapCounter({ 1, 0 }, "deaths");
 
-  heatmap->IncrementMapCounter({ 1, 2 }, std::string("deaths"));
+  heatmap->IncrementMapCounter({ 1, 2 }, "deaths");
 
   char* serialized_hm1; 
   const char* const_serialized;

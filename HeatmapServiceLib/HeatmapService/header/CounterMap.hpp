@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////
-// CoordinatesMap.h: Declaration of CoordinatesMap helper class. 
+// CounterMap.h: Declaration of CounterMap helper class. 
 // Contains data for a specific counter
 // Includes Boost libraries to serialize itself
 // Written by: Pedro Engana (http://pedroengana.com) 
@@ -22,7 +22,7 @@ namespace heatmap_service
   };
 
 
-  class CoordinatesMap
+  class CounterMap
   {
   private:
     const int kInitialMapSize = 1;
@@ -37,8 +37,8 @@ namespace heatmap_service
     int lowest_coord_y_;
     int highest_coord_y_;
   public:
-    CoordinatesMap();
-    ~CoordinatesMap();
+    CounterMap();
+    ~CounterMap();
 
     bool IncrementValueAt(int coord_x, int coord_y);
     bool AddAmountAt(int coord_x, int coord_y, int amount);

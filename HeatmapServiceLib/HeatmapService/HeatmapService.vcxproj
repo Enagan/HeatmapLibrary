@@ -11,13 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\CoordinatesMap.hpp" />
+    <ClInclude Include="header\CounterMap.hpp" />
     <ClInclude Include="header\HeatmapPrivate.h" />
     <ClInclude Include="HeatmapService.h" />
     <ClInclude Include="HeatmapServiceTypes.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\CoordinatesMap.cpp" />
+    <ClCompile Include="source\CounterMap.cpp" />
     <ClCompile Include="source\Heatmap.cpp" />
     <ClCompile Include="source\HeatmapService.cpp" />
   </ItemGroup>

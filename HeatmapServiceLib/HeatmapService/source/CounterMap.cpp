@@ -4,22 +4,22 @@
 namespace heatmap_service
 {
   // --------- Public Methods ------------ 
-  CoordinatesMap::CoordinatesMap()
+  CounterMap::CounterMap()
   {
     map_columns = NULL;
     InitializeMap();
   }
-  CoordinatesMap::~CoordinatesMap()
+  CounterMap::~CounterMap()
   {
     DestroyMap();
   }
 
-  bool CoordinatesMap::IncrementValueAt(int coord_x, int coord_y)
+  bool CounterMap::IncrementValueAt(int coord_x, int coord_y)
   {
     return AddAmountAt(coord_x, coord_y, 1);
   }
 
-  bool CoordinatesMap::AddAmountAt(int coord_x, int coord_y, int amount)
+  bool CounterMap::AddAmountAt(int coord_x, int coord_y, int amount)
   {
     int adjusted_coord_x, adjusted_coord_y;
     try {
@@ -49,7 +49,7 @@ namespace heatmap_service
     return true;
   }
 
-  uint32_t CoordinatesMap::getValueAt(int coord_x, int coord_y)
+  uint32_t CounterMap::getValueAt(int coord_x, int coord_y)
   {
     int adjusted_coord_x = coord_x + map_columns_negative_coord_padding;
     int adjusted_coord_y = coord_y + map_columns[adjusted_coord_x].col_negative_coord_padding;
@@ -61,31 +61,31 @@ namespace heatmap_service
     return map_columns[adjusted_coord_x].column[adjusted_coord_y];
   }
 
-  int CoordinatesMap::lowest_coord_x()
+  int CounterMap::lowest_coord_x()
   {
     return lowest_coord_x_;
   }
-  int CoordinatesMap::highest_coord_x()
+  int CounterMap::highest_coord_x()
   {
     return highest_coord_x_;
   }
-  int CoordinatesMap::lowest_coord_y()
+  int CounterMap::lowest_coord_y()
   {
     return lowest_coord_y_;
   }
-  int CoordinatesMap::highest_coord_y()
+  int CounterMap::highest_coord_y()
   {
     return highest_coord_y_;
   }
 
-  void CoordinatesMap::ClearMap()
+  void CounterMap::ClearMap()
   {
     DestroyMap();
     InitializeMap();
   }
 
   // --------- Private Methods ------------
-  void CoordinatesMap::InitializeMap()
+  void CounterMap::InitializeMap()
   {
     if (map_columns != NULL)
       DestroyMap();
@@ -107,7 +107,7 @@ namespace heatmap_service
     }
   }
 
-  void CoordinatesMap::DestroyMap()
+  void CounterMap::DestroyMap()
   {
     if (map_columns != NULL)
     {
@@ -121,7 +121,7 @@ namespace heatmap_service
     map_columns = NULL;
   }
 
-  void CoordinatesMap::AddColumns()
+  void CounterMap::AddColumns()
   {
     int new_length = map_columns_length_ * 2;
     Column* new_map_columns = new Column[new_length];
@@ -142,7 +142,7 @@ namespace heatmap_service
     map_columns_length_ = new_length;
   }
 
-  void CoordinatesMap::InsertColumnsAtBeggining()
+  void CounterMap::InsertColumnsAtBeggining()
   {
     int new_length = map_columns_length_ * 2;
     Column* new_map_columns = new Column[new_length];
@@ -164,7 +164,7 @@ namespace heatmap_service
     map_columns_length_ = new_length;
   }
 
-  void CoordinatesMap::GrowColumnAtEnd(unsigned int adjusted_coord_x)
+  void CounterMap::GrowColumnAtEnd(unsigned int adjusted_coord_x)
   {
     while ((int)adjusted_coord_x >= map_columns_length_)
       AddColumns();
@@ -182,7 +182,7 @@ namespace heatmap_service
     map_columns[adjusted_coord_x].col_length = new_length;
   }
 
-  void CoordinatesMap::GrowColumnAtBeggining(unsigned int adjusted_coord_x)
+  void CounterMap::GrowColumnAtBeggining(unsigned int adjusted_coord_x)
   {
     while ((int)adjusted_coord_x >= map_columns_length_)
       AddColumns();
@@ -202,7 +202,7 @@ namespace heatmap_service
     map_columns[adjusted_coord_x].col_length = new_length;
   }
 
-  void CoordinatesMap::CheckIfNewBoundary(int coord_x, int coord_y)
+  void CounterMap::CheckIfNewBoundary(int coord_x, int coord_y)
   {
     if (coord_x < lowest_coord_x_)
       lowest_coord_x_ = coord_x;

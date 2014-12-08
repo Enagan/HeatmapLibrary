@@ -6,7 +6,7 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="HeatmapServiceTypes.h" />
-    <ClInclude Include="header\CoordinatesMap.hpp">
+    <ClInclude Include="header\CounterMap.hpp">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
@@ -22,10 +22,10 @@
     <ClCompile Include="source\Heatmap.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="source\CoordinatesMap.cpp">
+    <ClCompile Include="source\HeatmapService.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="source\HeatmapService.cpp">
+    <ClCompile Include="source\CounterMap.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

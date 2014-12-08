@@ -55,7 +55,8 @@ namespace heatmap_service
 
 
     // -- Heatmap query methods
-    // Similar to the logging methods, these fetch the heatmap values for any given counter.
+    // Similar to the logging methods, these fetch the heatmap values for any given counter. If data is requested from a counter that doesn't yet exist, or
+    // if the provided coordinate was never previously logged, the return will be 0.
     // Querying a single coordinate inside a counter map has O(1) complexity, 
     // (reaching the correct counter map is O(n), where n = amount of diferent counters (deaths, gold, etc...). It's not expected that enough counters need to be logged for this to be a significant bottleneck)
     // Querying an area, inside a counter map, will naturally have O(n) where n = width*height.
