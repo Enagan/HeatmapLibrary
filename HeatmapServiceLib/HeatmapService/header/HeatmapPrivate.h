@@ -1,3 +1,8 @@
+////////////////////////////////////////////////////////////////////////
+// Heatmap.h: Inner declaration of real Heatmap class
+// Written by: Pedro Engana (http://pedroengana.com) 
+////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include <string>
 #include "HeatmapServiceTypes.h"
@@ -40,9 +45,6 @@ namespace heatmap_service
 
     bool SerializeHeatmap(char* &out_buffer, int &out_length);
     bool DeserializeHeatmap(const char* &in_buffer, int in_length);
-
-    // LIB TEST
-    double Add(double a, double b);
 
     unsigned int getCounterAtPosition(double coord_x, double coord_y, std::string &counter_key);
     unsigned int getCounterAtPosition(HeatmapCoordinate coords, std::string &counter_key);

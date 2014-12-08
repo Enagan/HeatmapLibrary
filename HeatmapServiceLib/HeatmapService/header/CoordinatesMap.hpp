@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////////////////
+// CoordinatesMap.h: Declaration of CoordinatesMap helper class. 
+// Contains data for a specific counter
+// Includes Boost libraries to serialize itself
+// Written by: Pedro Engana (http://pedroengana.com) 
+////////////////////////////////////////////////////////////////////
+
 #pragma once
 #include <cstdint>
 #include <boost\serialization\access.hpp>

@@ -17,9 +17,9 @@
     <ClInclude Include="HeatmapServiceTypes.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HeatmapService.cpp" />
     <ClCompile Include="source\CoordinatesMap.cpp" />
     <ClCompile Include="source\Heatmap.cpp" />
+    <ClCompile Include="source\HeatmapService.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{57BFDEC9-83B8-4E81-BD2C-40AC8A6A48C3}</ProjectGuid>
