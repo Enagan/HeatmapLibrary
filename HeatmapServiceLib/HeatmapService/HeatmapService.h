@@ -38,7 +38,7 @@ namespace heatmap_service
     bool hasMapForCounter(const std::string &counter_key);
 
     // -- Heatmap activity logging methods
-    // Incrementing or adding values to a counter in the heatmap is a simple as providing the coordinates and the counter key used
+    // Incrementing or adding values to a counter in the heatmap is a simple as providing the coordinates and the counter key used (deaths, gold lost, etc...)
     // The heatmap supports any values for coordinates, both positive and negative, as well as fractional. The map will grow as needed to accomodate.
     // In case the map growth reaches the limits of memory available for the process, these functions will write error logs to cout and return false. All previously logged data will still be available
     // Counter keys can be passed both as a c string or an std::string depending on what is most comfortable for the programmer at the point these methods are called.
@@ -57,7 +57,7 @@ namespace heatmap_service
     // Similar to the logging methods, these fetch the heatmap values for any given counter. If data is requested from a counter that doesn't yet exist, or
     // if the provided coordinate was never previously logged, the return will be 0.
     // Querying a single coordinate inside a counter map has O(1) complexity, 
-    // (reaching the correct counter map is O(n), where n = amount of diferent counters (deaths, gold, etc...). It's not expected that enough counters need to be logged for this to be a significant bottleneck)
+    // (reaching the correct counter map is O(n), where n = amount of diferent counters. It's not expected that enough counters need to be logged for this to be a significant bottleneck, deeper discussion on the readme)
     // Querying an area, inside a counter map, will naturally have O(n) where n = width*height.
     unsigned int getCounterAtPosition(double coord_x, double coord_y, const std::string &counter_key);
     unsigned int getCounterAtPosition(HeatmapCoordinate coords, const std::string &counter_key);
