@@ -29,6 +29,7 @@ namespace heatmap_service
     Heatmap();
     Heatmap(double smallest_spatial_unit_size);
     Heatmap(double smallest_spatial_unit_width, double smallest_spatial_unit_height);
+    Heatmap(HeatmapSize smallest_spatial_unit_size);
     ~Heatmap();
 
     bool hasMapForCounter(std::string &counter_key);

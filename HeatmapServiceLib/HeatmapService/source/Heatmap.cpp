@@ -14,14 +14,24 @@ namespace heatmap_service
     counter_glossary_ = NULL;
   }
 
-  Heatmap::Heatmap(double smallest_spatial_unit_size) : single_unit_width_(smallest_spatial_unit_size), single_unit_height_(smallest_spatial_unit_size), amount_of_counters_(0)
+  Heatmap::Heatmap(double smallest_spatial_unit_size) : amount_of_counters_(0)
   {
+    single_unit_width_ = single_unit_height_ = smallest_spatial_unit_size > 0 ? smallest_spatial_unit_size : 1;
     counter_glossary_ = NULL;
   }
 
   Heatmap::Heatmap(double smallest_spatial_unit_width,
-    double smallest_spatial_unit_height) : single_unit_width_(smallest_spatial_unit_width), single_unit_height_(smallest_spatial_unit_height), amount_of_counters_(0)
+    double smallest_spatial_unit_height) : amount_of_counters_(0)
   {
+    single_unit_width_ = smallest_spatial_unit_width > 0 ? smallest_spatial_unit_width : 1;
+    single_unit_height_ = smallest_spatial_unit_height > 0 ? smallest_spatial_unit_height : 1;
+    counter_glossary_ = NULL;
+  }
+
+  Heatmap::Heatmap(HeatmapSize smallest_spatial_unit_size) : amount_of_counters_(0)
+  {
+    single_unit_width_ = smallest_spatial_unit_size.width > 0 ? smallest_spatial_unit_size.width : 1;
+    single_unit_height_ = smallest_spatial_unit_size.height > 0 ? smallest_spatial_unit_size.height : 1;
     counter_glossary_ = NULL;
   }
 

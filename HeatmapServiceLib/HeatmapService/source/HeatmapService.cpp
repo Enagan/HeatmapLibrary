@@ -26,6 +26,16 @@ namespace heatmap_service
     return private_heatmap_->single_unit_width();
   }
 
+  // -- Counter queries
+  bool HeatmapService::hasMapForCounter(const char* &counter_key)
+  {
+    return private_heatmap_->hasMapForCounter(counter_key);
+  }
+  bool HeatmapService::hasMapForCounter(const std::string &counter_key)
+  {
+    return private_heatmap_->hasMapForCounter(counter_key);
+  }
+
   // -- Heatmap activity logging methods
   bool HeatmapService::IncrementMapCounter(double coord_x, double coord_y, const char* &counter_key)
   {

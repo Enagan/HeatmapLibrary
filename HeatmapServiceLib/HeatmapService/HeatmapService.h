@@ -20,10 +20,9 @@ namespace heatmap_service
   class HeatmapService
   {
   public:
-    // The Heatmap can be intialized with spatial resolution, meaning that the smalest unit of space, in the eyes of the heatmap
-    // will be the one provided. 
+    // The Heatmap can be intialized with spatial resolution, meaning that the smalest unit of space, in the eyes of the heatmap will be the one provided. 
     // This means that, for example, if the spatial resolution is {10, 8} incrementing a counter at the coords { 1 , 2 } and { 5 , 7 } will result in an increment to the same unit
-    // If the default constructor is used, or negative values are provided in any of the thers, the spatial resolution will be set to a default of { 1 , 1 }, respectively.
+    // If the default constructor is used, or negative (and zero) values are provided in any of the other constructor, the spatial resolution will be set to a default of { 1 , 1 }, respectively.
     HeatmapService();
     HeatmapService(double smallest_spatial_unit_size);
     HeatmapService(double smallest_spatial_unit_width, double smallest_spatial_unit_height);
@@ -36,6 +35,9 @@ namespace heatmap_service
     double single_unit_width();
     HeatmapSize single_unit_size();
 
+    // -- Queries if a certain counter has ever been added to the heatmap
+    bool hasMapForCounter(const char* &counter_key);
+    bool hasMapForCounter(const std::string &counter_key);
 
     // -- Heatmap activity logging methods
     // Incrementing or adding values to a counter in the heatmap is a simple as providing the coordinates and the counter key used
