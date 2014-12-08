@@ -84,7 +84,6 @@ namespace heatmap_service
 
   private:
     // Internal instance of the Heatmap. Use of the pimpl idiom to hide private and internal methods from the library header
-    // Use of a smart pointer to relieve concerns about deallocation internally
-    std::unique_ptr<Heatmap> private_heatmap_;
+    Heatmap* private_heatmap_;
   };
 }

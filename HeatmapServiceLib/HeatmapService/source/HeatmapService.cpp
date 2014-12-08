@@ -10,15 +10,17 @@ namespace heatmap_service
 {
   // Implementation of the HeatmapService class serves only to pass the correct arguments to the inner private Heatmap
 
-  // Allocates the smart pointer with the respective arguments
+  // Allocates the private pointer with the respective arguments
   HeatmapService::HeatmapService() : private_heatmap_(new Heatmap()){}
   HeatmapService::HeatmapService(double smallest_spatial_unit_size) : private_heatmap_(new Heatmap(smallest_spatial_unit_size)){}
   HeatmapService::HeatmapService(double smallest_spatial_unit_width, 
                                  double smallest_spatial_unit_height) : private_heatmap_(new Heatmap(smallest_spatial_unit_width, smallest_spatial_unit_height)){}
   HeatmapService::HeatmapService(HeatmapSize smallest_spatial_unit_size) : private_heatmap_(new Heatmap(smallest_spatial_unit_size.width, smallest_spatial_unit_size.height)){}
 
-  // The smart pointer will deallocate itself as the HeatmapService class is destroyed
-  HeatmapService::~HeatmapService(){}
+  HeatmapService::~HeatmapService()
+  {
+    delete(private_heatmap_);
+  }
 
   // -- Getters for the current spatial resolution
   double HeatmapService::single_unit_height()
