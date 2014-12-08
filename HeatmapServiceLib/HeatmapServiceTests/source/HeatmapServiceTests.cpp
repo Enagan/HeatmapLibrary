@@ -32,7 +32,7 @@ bool TestDeserializeIntoFilledHeatmap();
 bool TestInvalidBufferForDeserialization();
 
 void StressTestMillionRegisters10kper10kCoords();
-void StressTestMillionRegisters10per10Coords();
+void StressTestMillionRegisters10per5Coords();
 void StressTestMillionRegisters5kper5kOnlyNegativeCoords();
 void StressTestThousandRegistriesFractionalResolution();
 
@@ -82,8 +82,8 @@ void RunStressTests()
 
   cout << endl << "Starting... StressTestMillionRegisters10kper10kCoords";
   StressTestMillionRegisters10kper10kCoords();
-  cout << endl << "Starting... StressTestMillionRegisters10per10Coords";
-  StressTestMillionRegisters10per10Coords();
+  cout << endl << "Starting... StressTestMillionRegisters10per5Coords";
+  StressTestMillionRegisters10per5Coords();
   cout << endl << "Starting... StressTestMillionRegisters5kper5kOnlyNegativeCoords";
   StressTestMillionRegisters5kper5kOnlyNegativeCoords();
   cout << endl << "Starting... StressTestThousandRegistriesFractionalResolution";
@@ -389,7 +389,7 @@ bool TestInvalidBufferForDeserialization()
   return false;
 }
 
-void StressTestMillionRegisters10per10Coords()
+void StressTestMillionRegisters10per5Coords()
 {
   heatmap_service::HeatmapService heatmap = heatmap_service::HeatmapService(1);
 
@@ -397,7 +397,7 @@ void StressTestMillionRegisters10per10Coords()
   for (long int i = 0; i < 1000000; i++)
   {
     int randX = rand() % 10;
-    int randY = rand() % 10;
+    int randY = rand() % 5;
     heatmap.IncrementMapCounter({ randX, randY }, kDeathsCounterKey);
   }
   clock_t end = clock();
