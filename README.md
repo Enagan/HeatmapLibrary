@@ -15,11 +15,14 @@ The Heatmap Service Lib is constituted of 3 main components:
 
 HeatmapService ---> Heatmap ---> CounterMap
 
-- Heatmap Service: A container for the inner functionality of the library. It occludes implementation details from the library header, and provides the library API.
+- Heatmap Service: A container for the inner functionality of the library. 
+- It occludes implementation details from the library header, and provides the library API.
 
-- Heatmap: The actual internal implementation of the Heatmap, It manages different CounterMaps for each counter (deaths, gold caught, etc...) it's responsible for incrementing the counters, querying and serializing itself and all it's maps.
+- Heatmap: The actual internal implementation of the Heatmap, 
+- It manages different CounterMaps for each counter (deaths, gold caught, etc...) it's responsible for incrementing the counters, querying and serializing itself and all it's maps.
 
-- CounterMap: Is the nitty gritty map of accumulators. It implements a dynamically increasing matrix that can grow on Y independently for each column, and always provides access times of O(1) complexity
+- CounterMap: Is the nitty gritty map of accumulators. 
+- It implements a dynamically increasing matrix that can grow on Y independently for each column, and always provides access times of O(1) complexity
 
 
 
