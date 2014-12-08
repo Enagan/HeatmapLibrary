@@ -43,6 +43,10 @@ namespace heatmap_service
 
   bool CounterMap::AddAmountAt(int coord_x, int coord_y, int amount)
   {
+    //If the amount is 0 or lesser, we don't need to register to do anything
+    if (amount <= 0)
+      return true;
+
     // Resize the map, in case coord_x and coord_y are outside the current scope
     try {
       ResizeMapIfNeededFor(coord_x, coord_y);

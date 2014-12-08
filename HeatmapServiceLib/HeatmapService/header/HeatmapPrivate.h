@@ -37,7 +37,6 @@ namespace heatmap_service
     Heatmap();
     Heatmap(double smallest_spatial_unit_size);
     Heatmap(double smallest_spatial_unit_width, double smallest_spatial_unit_height);
-    Heatmap(HeatmapSize smallest_spatial_unit_size);
     ~Heatmap();
 
     // -- Getters for the current spatial resolution
@@ -51,10 +50,10 @@ namespace heatmap_service
     bool IncrementMapCounter(double coord_x, double coord_y, const std::string &counter_key);
     bool IncrementMapCounter(HeatmapCoordinate coords, const std::string &counter_key);
 
-    bool IncrementMapCounterByAmount(double coord_x, double coord_y, const  std::string &counter_key, unsigned int add_amount);
-    bool IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, unsigned int add_amount);
+    bool IncrementMapCounterByAmount(double coord_x, double coord_y, const  std::string &counter_key, int add_amount);
+    bool IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, int add_amount);
 
-    bool IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], unsigned int amounts[], int counter_keys_length);
+    bool IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], int amounts[], int counter_keys_length);
 
     // -- Heatmap query methods
     unsigned int getCounterAtPosition(double coord_x, double coord_y, const std::string &counter_key);

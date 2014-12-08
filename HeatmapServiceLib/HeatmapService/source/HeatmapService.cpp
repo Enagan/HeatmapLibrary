@@ -15,7 +15,6 @@ namespace heatmap_service
   HeatmapService::HeatmapService(double smallest_spatial_unit_size) : private_heatmap_(new Heatmap(smallest_spatial_unit_size)){}
   HeatmapService::HeatmapService(double smallest_spatial_unit_width, 
                                  double smallest_spatial_unit_height) : private_heatmap_(new Heatmap(smallest_spatial_unit_width, smallest_spatial_unit_height)){}
-  HeatmapService::HeatmapService(HeatmapSize smallest_spatial_unit_size) : private_heatmap_(new Heatmap(smallest_spatial_unit_size.width, smallest_spatial_unit_size.height)){}
 
   HeatmapService::~HeatmapService()
   {
@@ -50,17 +49,17 @@ namespace heatmap_service
     return private_heatmap_->IncrementMapCounter(coords, counter_key);
   }
 
-  bool HeatmapService::IncrementMapCounterByAmount(double coord_x, double coord_y, const std::string &counter_key, unsigned int add_amount)
+  bool HeatmapService::IncrementMapCounterByAmount(double coord_x, double coord_y, const std::string &counter_key, int add_amount)
   {
     return private_heatmap_->IncrementMapCounterByAmount(coord_x, coord_y, counter_key, add_amount);
   }
 
-  bool HeatmapService::IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, unsigned int add_amount)
+  bool HeatmapService::IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, int add_amount)
   {
     return private_heatmap_->IncrementMapCounterByAmount(coords, counter_key, add_amount);
   }
 
-  bool HeatmapService::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], unsigned int amounts[], int counter_keys_length)
+  bool HeatmapService::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], int amounts[], int counter_keys_length)
   {
     return private_heatmap_->IncrementMultipleMapCountersByAmount(coords, counter_keys, amounts, counter_keys_length);
   }

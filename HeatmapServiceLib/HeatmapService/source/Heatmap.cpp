@@ -15,19 +15,13 @@
 namespace heatmap_service
 {
   // Spatial resolution initialization
-  Heatmap::Heatmap() : Heatmap({ 1, 1 }){}
-  Heatmap::Heatmap(double smallest_spatial_unit_size) : Heatmap({ smallest_spatial_unit_size, smallest_spatial_unit_size }){}
+  Heatmap::Heatmap() : single_unit_width_(1), single_unit_height_(1), key_map_dictionary_length_(0), key_map_dictionary_(NULL) {}
+  Heatmap::Heatmap(double smallest_spatial_unit_size) : Heatmap( smallest_spatial_unit_size, smallest_spatial_unit_size ){}
   Heatmap::Heatmap(double smallest_spatial_unit_width,
     double smallest_spatial_unit_height) : key_map_dictionary_length_(0), key_map_dictionary_(NULL) 
   {
     single_unit_width_ = smallest_spatial_unit_width > 0 ? smallest_spatial_unit_width : 1;
     single_unit_height_ = smallest_spatial_unit_height > 0 ? smallest_spatial_unit_height : 1;
-  }
-
-  Heatmap::Heatmap(HeatmapSize smallest_spatial_unit_size) : key_map_dictionary_length_(0), key_map_dictionary_(NULL)
-  {
-    single_unit_width_ = smallest_spatial_unit_size.width > 0 ? smallest_spatial_unit_size.width : 1;
-    single_unit_height_ = smallest_spatial_unit_size.height > 0 ? smallest_spatial_unit_size.height : 1;
   }
 
   Heatmap::~Heatmap()
@@ -68,19 +62,19 @@ namespace heatmap_service
     return IncrementMapCounterByAmount(coords, counter_key, 1);
   }
 
-  bool Heatmap::IncrementMapCounterByAmount(double coord_x, double coord_y, const std::string &counter_key, unsigned int add_amount)
+  bool Heatmap::IncrementMapCounterByAmount(double coord_x, double coord_y, const std::string &counter_key, int add_amount)
   {
     return IncrementMapCounterByAmount({ coord_x, coord_y }, counter_key, add_amount);
   }
 
-  bool Heatmap::IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, unsigned int add_amount)
+  bool Heatmap::IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, int add_amount)
   {
     CounterMap* map_for_counter = getOrAddMapForCounter(counter_key);
     HeatmapCoordinate adjustedCoords = AdjustCoordsToSpatialResolution(coords);
     return map_for_counter->AddAmountAt((int)adjustedCoords.x, (int)adjustedCoords.y, add_amount);
   }
 
-  bool Heatmap::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], unsigned int amounts[], int counter_keys_length)
+  bool Heatmap::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], int amounts[], int counter_keys_length)
   {
     bool result = true;
     for (int i = 0; i < counter_keys_length; i++)
@@ -239,6 +233,10 @@ namespace heatmap_service
   // Inner implementation of get counter inside rect. Receives already adjusted coordinates
   bool Heatmap::getCounterDataInsideAdjustedRect(HeatmapCoordinate adjusted_lower_left, HeatmapCoordinate adjusted_upper_right, const std::string &counter_key, HeatmapData &out_data)
   {
+    // If the area is invalid, we return with a failure
+    if (adjusted_lower_left.x > adjusted_upper_right.x || adjusted_lower_left.y > adjusted_upper_right.y)
+      return false;
+
     CounterMap* map_for_counter = getOrAddMapForCounter(counter_key);
 
     int width = (int)adjusted_upper_right.x - (int)adjusted_lower_left.x + 1;

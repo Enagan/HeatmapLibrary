@@ -26,7 +26,6 @@ namespace heatmap_service
     HeatmapService();
     HeatmapService(double smallest_spatial_unit_size);
     HeatmapService(double smallest_spatial_unit_width, double smallest_spatial_unit_height);
-    HeatmapService(HeatmapSize smallest_spatial_unit_size);
 
     ~HeatmapService();
 
@@ -46,12 +45,12 @@ namespace heatmap_service
     bool IncrementMapCounter(double coord_x, double coord_y, const std::string &counter_key);
     bool IncrementMapCounter(HeatmapCoordinate coords, const std::string &counter_key);
 
-    // Instead of simply incrementing by one, these functions allow the addition of any value to the counter
-    bool IncrementMapCounterByAmount(double coord_x, double coord_y, const std::string &counter_key, unsigned int add_amount);
-    bool IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, unsigned int add_amount);
+    // Instead of simply incrementing by one, these functions allow the addition of any value to the counter, in case the provided value is zero or negative the counter won't be incremented
+    bool IncrementMapCounterByAmount(double coord_x, double coord_y, const std::string &counter_key, int add_amount);
+    bool IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, int add_amount);
 
     // It can be convinient to log to several different counters at the same time for the same coordinate (deaths, gold lost, etc...), this function provides syntax sugar for those situations
-    bool IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], unsigned int amounts[], int counter_keys_length);
+    bool IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], int amounts[], int counter_keys_length);
 
 
     // -- Heatmap query methods
@@ -79,6 +78,7 @@ namespace heatmap_service
     // make sure you saved your current data before you deserialize into a Heatmap
     // --- WARNING!: Serialization uses the boost serialization library
     // ---   More specifically, libboost_iostreams-vc120-mt-1_57.lib and libboost_serialization-vc120-mt-1_57.lib as well as the serialization and archive hpp headers.
+    // ---   As such, boost exceptions will be launched upon errors or invalid input data
     bool SerializeHeatmap(char* &out_buffer, int &out_length);
     bool DeserializeHeatmap(const char* &in_buffer, int in_length);
 
