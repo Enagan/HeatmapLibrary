@@ -25,7 +25,7 @@ namespace heatmap_service
     double single_unit_width_;
     double single_unit_height_;
 
-    // We keed each CounterMap in an unordered array of KeyValues
+    // We keep each CounterMap in an unordered array of KeyValues
     // This method of storing CounterKeys isn't the most well performing structure requiring traversal for access
     // But I assume that on a regular use of the Heatmap, not too many different counters will be used (maybe 10, 20 at most?)
     // As such, I believe the performance isn't sufficiently significant to justify a more complex structure

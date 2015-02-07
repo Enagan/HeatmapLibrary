@@ -61,7 +61,7 @@ The Heatmap can serialize itself to a char array, and later recovered from the s
 /////////////////////////////////////////////////////
 ////// Discussion on Assumptions and Decisions //////
 /////////////////////////////////////////////////////
-In this section I'll document and discuss some of my design decisions given the high level requirements that were presented to me.
+In this section I'll document and discuss some of my design decisions.
 
 - The Pimpl Idiom as a way to occlude private library info:
 This one wasn't a hard decision, but right at the start I decided that If I was building a library, then I needed to approach it as a separate project. As self-contained as possible and as "black-box" as possible, to prevent any kind of wrong use. No private implementation should be shown. For this I used the private implementation idiom (PIMPL).
@@ -77,10 +77,10 @@ This structure is a very simple array of key values to index counter keys to the
 This structure isn't the most speedy to access (O(n)), but it's simple, memory efficient and pretty explicit. I decided to implement it as such since I felt I didn't need the most well performing structure to index keys. Following the same assumption I described above, in a regular use of the lib no more than 20 or 30 different counters are likely to be used, so the performance hits won't be too significant.
 
 - Use of Raw Pointers VS smart pointers
-In modern C++, using smart pointers is very strongly encouraged, and in regular situations, if the performance hit wasn't significant, I would definitely use them. They are excellent at preventing mistakes. Here however, I decided to go with raw pointers. The reasoning for it is simple. The requirement that I don't use STL gives me hints that this exercise was to also to evaluate my skills with memory, so this is a way for me to "show off" that I can manually deal with memory if necessary.
+In modern C++, using smart pointers is very strongly encouraged, and in regular situations, if the performance hit wasn't significant, I would definitely use them. They are excellent at preventing mistakes. Here however, I decided to go with raw pointers. The reasoning for it is simple. With this exercise I hope to show off some of my skills with manual memory allocation.
 
 - Boost Serialization
-Serialization can be quite tricky, and there's already a bunch of very good libraries that implement efficient and error-free serialization functionalities. Boost is the obvious choice for this, as it's libraries are widely used and are even in the process of being introduced into the c++ standard. No need to re-invent wheels, when there's a perfectly good one ready for use. I did however, still ask Thomas Abrams from HR If I could in fact use it, and the response was positive.
+Serialization can be quite tricky, and there's already a bunch of very good libraries that implement efficient and error-free serialization functionalities. Boost is the obvious choice for this, as it's libraries are widely used and are even in the process of being introduced into the c++ standard. No need to re-invent wheels, when there's a perfectly good one ready for use.
 
 - Thread Safety
 I pondered for a while If I should make the Heatmap thread safe or not. In the end, I decided against it. Even though it would be a nice to have feature, it shouldn't be it's default responsibility to make itself thread safe, instead, the software that uses the lib should take care not to do parallel calls. A thread safe extension to the heatmap could perhaps make sense.
@@ -106,4 +106,4 @@ Merging two heatmaps together, or additively de-serializing into another could b
 .heatmap files for easy saving and loading, not requiring the software in charge to do it would definitely be useful, but outside the scope of the exercise.
 
 - Using STL
-If I didn't have the explicit requirement that I shouldn't use STL, I would have used it, if performance and memory wasn't too much of a bottleneck. The containers in the library are much safer to use and easier to read in code.
+If I didn't have the desire to show my abilities in dealing with pointers manually, I would have used STL, if performance and memory wasn't too much of a bottleneck. The containers in the library are much safer to use and easier to read in code.

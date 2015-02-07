@@ -20,7 +20,7 @@ namespace heatmap_service
   class HeatmapService
   {
   public:
-    // The Heatmap can be intialized with spatial resolution, meaning that the smalest unit of space, in the eyes of the heatmap will be the one provided. 
+    // The Heatmap can be initialized with spatial resolution, meaning that the smallest unit of space, in the eyes of the heatmap will be the one provided. 
     // This means that, for example, if the spatial resolution is {10, 8} incrementing a counter at the coords { 1 , 2 } and { 5 , 7 } will result in an increment to the same unit
     // If the default constructor is used, or negative (and zero) values are provided in any of the other constructor, the spatial resolution will be set to a default of { 1 , 1 }, respectively.
     HeatmapService();
@@ -39,7 +39,7 @@ namespace heatmap_service
 
     // -- Heatmap activity logging methods
     // Incrementing or adding values to a counter in the heatmap is a simple as providing the coordinates and the counter key used (deaths, gold lost, etc...)
-    // The heatmap supports any values for coordinates, both positive and negative, as well as fractional. The map will grow as needed to accomodate.
+    // The heatmap supports any values for coordinates, both positive and negative, as well as fractional. The map will grow as needed to accommodate.
     // In case the map growth reaches the limits of memory available for the process, these functions will write error logs to cout and return false. All previously logged data will still be available
     // Counter keys can be passed both as a c string or an std::string depending on what is most comfortable for the programmer at the point these methods are called.
     bool IncrementMapCounter(double coord_x, double coord_y, const std::string &counter_key);
@@ -49,7 +49,7 @@ namespace heatmap_service
     bool IncrementMapCounterByAmount(double coord_x, double coord_y, const std::string &counter_key, int add_amount);
     bool IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, int add_amount);
 
-    // It can be convinient to log to several different counters at the same time for the same coordinate (deaths, gold lost, etc...), this function provides syntax sugar for those situations
+    // It can be convenient to log to several different counters at the same time for the same coordinate (deaths, gold lost, etc...), this function provides syntax sugar for those situations
     bool IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], int amounts[], int counter_keys_length);
 
 
@@ -57,12 +57,12 @@ namespace heatmap_service
     // Similar to the logging methods, these fetch the heatmap values for any given counter. If data is requested from a counter that doesn't yet exist, or
     // if the provided coordinate was never previously logged, the return will be 0.
     // Querying a single coordinate inside a counter map has O(1) complexity, 
-    // (reaching the correct counter map is O(n), where n = amount of diferent counters. It's not expected that enough counters need to be logged for this to be a significant bottleneck, deeper discussion on the readme)
+    // (reaching the correct counter map is O(n), where n = amount of different counters. It's not expected that enough counters need to be logged for this to be a significant bottleneck, deeper discussion on the readme)
     // Querying an area, inside a counter map, will naturally have O(n) where n = width*height.
     unsigned int getCounterAtPosition(double coord_x, double coord_y, const std::string &counter_key);
     unsigned int getCounterAtPosition(HeatmapCoordinate coords, const std::string &counter_key);
 
-    // These methods fetch an area of the heatmap instead of a single point. The data is returned via the HeatmapData output parameter and the funtion returns true if successfull.
+    // These methods fetch an area of the heatmap instead of a single point. The data is returned via the HeatmapData output parameter and the function returns true if successful.
     // Its the responsibility of the function that calls this to destroy HeatmapData when it's no longer needs to be used
     bool getCounterDataInsideRect(double lower_coord_x, double lower_coord_y, double upper_coord_x, double upper_coord_y, const std::string &counter_key, HeatmapData &out_data);
     bool getCounterDataInsideRect(HeatmapCoordinate lower_left, HeatmapCoordinate upper_right, const std::string &counter_key, HeatmapData &out_data);
@@ -73,8 +73,8 @@ namespace heatmap_service
 
 
     // -- Heatmap serialization
-    // The Heatmap can be serialized into a char* buffer. This buffer can be saved to a file and later restored with the deserialize function
-    // Serialization returns the buffer and it's size via the output parameters and returns true if successfull, false if any error occured.
+    // The Heatmap can be serialized into a char* buffer. This buffer can be saved to a file and later restored with the serialize function
+    // Serialization returns the buffer and it's size via the output parameters and returns true if successful, false if any error occurred.
     // Deserializing a char buffer into this map will firstly clean it of any data, and then load the serialized data in, 
     // make sure you saved your current data before you deserialize into a Heatmap
     // --- WARNING!: Serialization uses the boost serialization library

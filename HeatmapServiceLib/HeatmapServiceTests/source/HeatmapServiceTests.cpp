@@ -383,6 +383,7 @@ bool TestInvalidBufferForDeserialization()
   // Boost exception should be caught here. Generalized only for testing purposes
   catch (exception &e)
   {
+
     return true;
   }
   delete(heatmap);
