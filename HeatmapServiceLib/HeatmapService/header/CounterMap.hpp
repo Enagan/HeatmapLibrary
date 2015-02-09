@@ -52,13 +52,15 @@ namespace heatmap_service
     int highest_coord_y_;
   public:
     CounterMap();
+    CounterMap(const CounterMap& copy);
+    CounterMap& operator=(const CounterMap& copy);
     ~CounterMap();
 
     // -- Getters of current map limits
-    int lowest_coord_x();
-    int highest_coord_x();
-    int lowest_coord_y();
-    int highest_coord_y();
+    int lowest_coord_x() const;
+    int highest_coord_x() const;
+    int lowest_coord_y() const;
+    int highest_coord_y() const;
 
     // -- Map registering methods
     // Increment the counters at the specified coordinates
@@ -69,7 +71,7 @@ namespace heatmap_service
     // -- Map query methods
     // Returns counter value at given coordinate
     // If coordinate lies outside the current scope of the map, 0 is returned.
-    uint32_t getValueAt(int coord_x, int coord_y);
+    uint32_t getValueAt(int coord_x, int coord_y) const;
 
     // -- Map Clear
     void ClearMap();

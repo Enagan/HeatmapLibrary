@@ -157,13 +157,13 @@ bool TestRegisterReadMultipleCounters()
 bool TestAllRegisteringMethods()
 {
   heatmap_service::HeatmapService heatmap = heatmap_service::HeatmapService( 2, 2 );
-  heatmap.IncrementMapCounter(0, 0, kDeathsCounterKey);
+  heatmap.IncrementMapCounter({ 0, 0 }, kDeathsCounterKey);
   heatmap.IncrementMapCounter({ 0, 0 }, kDeathsCounterKey);
 
   heatmap.IncrementMapCounterByAmount({ 0, 0 }, kDeathsCounterKey, 1);
-  heatmap.IncrementMapCounterByAmount(0, 0, kDeathsCounterKey, 1);
+  heatmap.IncrementMapCounterByAmount({ 0, 0 }, kDeathsCounterKey, 1);
   heatmap.IncrementMapCounterByAmount({ 0, 0 }, kDeathsCounterKey, -1);
-  heatmap.IncrementMapCounterByAmount(0, 0, kDeathsCounterKey, -1);
+  heatmap.IncrementMapCounterByAmount({ 0, 0 }, kDeathsCounterKey, -1);
 
   const std::string counters[3] = { kDeathsCounterKey, kDodgesKey, kGoldObtainedCounterKey };
   int amounts[3] = { 1, 3, 4 };
@@ -184,7 +184,7 @@ bool TestSimpleGetArea()
   heatmap.IncrementMapCounter({ 2, 2 }, kDeathsCounterKey);
 
   heatmap_service::HeatmapData out_data;
-  if (!heatmap.getCounterDataInsideRect(-2,-2,1,1,kDeathsCounterKey,out_data))
+  if (!heatmap.getCounterDataInsideRect({ -2, -2 }, { 1, 1 }, kDeathsCounterKey, out_data))
     return false;
 
   bool result = out_data.counter_name->compare(kDeathsCounterKey) == 0 &&
@@ -207,7 +207,7 @@ bool TestGetAreaUnitSizedRect()
   heatmap.IncrementMapCounter({ 2, 2 }, kDeathsCounterKey);
 
   heatmap_service::HeatmapData out_data;
-  if (!heatmap.getCounterDataInsideRect(0, 0, 0, 0, kDeathsCounterKey, out_data))
+  if (!heatmap.getCounterDataInsideRect({ 0, 0 }, { 0, 0 }, kDeathsCounterKey, out_data))
     return false;
 
   bool result = out_data.counter_name->compare(kDeathsCounterKey) == 0 &&
@@ -232,7 +232,7 @@ bool TestGetAreaUpperLowerSwitched()
 
   heatmap_service::HeatmapData out_data;
 
-  bool result = !heatmap.getCounterDataInsideRect(2, 2, -2, -2, kDeathsCounterKey, out_data);
+  bool result = !heatmap.getCounterDataInsideRect({ 2, 2 },{ -2, -2 }, kDeathsCounterKey, out_data);
 
   if (result == false)
   {

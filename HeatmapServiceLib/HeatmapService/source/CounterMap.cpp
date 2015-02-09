@@ -8,9 +8,50 @@
 
 namespace heatmap_service
 {
-  CounterMap::CounterMap() : map_columns_(NULL)
+  CounterMap::CounterMap() : map_columns_(nullptr)
   {
     InitializeMap();
+  }
+  CounterMap::CounterMap(const CounterMap& copy) : lowest_coord_x_(copy.lowest_coord_x_), highest_coord_x_(copy.highest_coord_x_),
+    lowest_coord_y_(copy.lowest_coord_y_), highest_coord_y_(copy.highest_coord_y_), map_columns_length_(copy.map_columns_length_),
+    map_columns_negative_coord_padding_(copy.map_columns_negative_coord_padding_)
+  {
+    // Copy columns
+    map_columns_ = new Column[map_columns_length_];
+    for (int i = 0; i < map_columns_length_; i++)
+    {
+      map_columns_[i].col_length = copy.map_columns_[i].col_length;
+      map_columns_[i].col_negative_coord_padding = copy.map_columns_[i].col_negative_coord_padding;
+      map_columns_[i].column = new uint32_t[map_columns_[i].col_length]();
+      for (int n = 0; n < map_columns_[i].col_length; n++)
+        map_columns_[i].column[n] = copy.map_columns_[i].column[n];
+    }
+  }
+  CounterMap& CounterMap::operator=(const CounterMap& copy)
+  {
+    if (this != &copy)
+    {
+      DestroyMap();
+      lowest_coord_x_ = copy.lowest_coord_x_;
+      highest_coord_x_ = copy.highest_coord_x_;
+      lowest_coord_y_ = copy.lowest_coord_y_;
+      highest_coord_y_ = copy.highest_coord_y_;
+
+      map_columns_length_ = copy.map_columns_length_;
+      map_columns_negative_coord_padding_ = copy.map_columns_negative_coord_padding_;
+      map_columns_ = new Column[map_columns_length_];
+
+      // Copy columns
+      for (int i = 0; i < map_columns_length_; i++)
+      {
+        map_columns_[i].col_length = copy.map_columns_[i].col_length;
+        map_columns_[i].col_negative_coord_padding = copy.map_columns_[i].col_negative_coord_padding;
+        map_columns_[i].column = new uint32_t[map_columns_[i].col_length]();
+        for (int n = 0; n < map_columns_[i].col_length; n++)
+          map_columns_[i].column[n] = copy.map_columns_[i].column[n];
+      }
+    }
+    return *this;
   }
   CounterMap::~CounterMap()
   {
@@ -18,19 +59,19 @@ namespace heatmap_service
   }
 
   // -- Getters of current map limits
-  int CounterMap::lowest_coord_x()
+  int CounterMap::lowest_coord_x() const
   {
     return lowest_coord_x_;
   }
-  int CounterMap::highest_coord_x()
+  int CounterMap::highest_coord_x() const
   {
     return highest_coord_x_;
   }
-  int CounterMap::lowest_coord_y()
+  int CounterMap::lowest_coord_y() const
   {
     return lowest_coord_y_;
   }
-  int CounterMap::highest_coord_y()
+  int CounterMap::highest_coord_y() const
   {
     return highest_coord_y_;
   }
@@ -66,7 +107,7 @@ namespace heatmap_service
   }
 
   // -- Map query methods
-  uint32_t CounterMap::getValueAt(int coord_x, int coord_y)
+  uint32_t CounterMap::getValueAt(int coord_x, int coord_y) const
   {
     // Adjust coordinates from heatmap coord space, to inner index space by adding the negative padding
     int index_coord_x = coord_x + map_columns_negative_coord_padding_;
@@ -93,7 +134,7 @@ namespace heatmap_service
   // -- Map initial alocation and destruction
   void CounterMap::InitializeMap()
   {
-    if (map_columns_ != NULL)
+    if (map_columns_ != nullptr)
       DestroyMap();
 
     lowest_coord_x_ = 0;
@@ -116,16 +157,16 @@ namespace heatmap_service
 
   void CounterMap::DestroyMap()
   {
-    if (map_columns_ != NULL)
+    if (map_columns_ != nullptr)
     {
       for (int i = 0; i < map_columns_length_; i++)
       {
         delete[] map_columns_[i].column;
-        map_columns_[i].column = NULL;
+        map_columns_[i].column = nullptr;
       }
     }
     delete[] map_columns_;
-    map_columns_ = NULL;
+    map_columns_ = nullptr;
   }
 
   // -- Resize Methods

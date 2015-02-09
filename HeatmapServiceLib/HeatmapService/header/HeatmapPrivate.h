@@ -18,7 +18,7 @@ namespace heatmap_service
     CounterMap *counter_map;
   };
 
-  class Heatmap
+  class HeatmapPrivate
   {
   private:
     // Spatial Resolution of heatmap
@@ -34,52 +34,52 @@ namespace heatmap_service
 
   public:
     // Spatial resolution initialization
-    Heatmap();
-    Heatmap(double smallest_spatial_unit_size);
-    Heatmap(double smallest_spatial_unit_width, double smallest_spatial_unit_height);
-    ~Heatmap();
+    HeatmapPrivate();
+    explicit HeatmapPrivate(double smallest_spatial_unit_size);
+    HeatmapPrivate(double smallest_spatial_unit_width, double smallest_spatial_unit_height);
+    HeatmapPrivate(const HeatmapPrivate& copy);
+    HeatmapPrivate& operator=(const HeatmapPrivate& copy);
+    ~HeatmapPrivate();
 
     // -- Getters for the current spatial resolution
-    double single_unit_height();
-    double single_unit_width();
+    double single_unit_height() const;
+    double single_unit_width() const;
 
     // -- Queries if a certain counter has ever been added to the heatmap
-    bool hasMapForCounter(const std::string &counter_key);
+    bool hasMapForCounter(const std::string &counter_key) const;
 
     // -- Heatmap activity logging methods
-    bool IncrementMapCounter(double coord_x, double coord_y, const std::string &counter_key);
     bool IncrementMapCounter(HeatmapCoordinate coords, const std::string &counter_key);
 
-    bool IncrementMapCounterByAmount(double coord_x, double coord_y, const  std::string &counter_key, int add_amount);
     bool IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, int add_amount);
 
     bool IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], int amounts[], int counter_keys_length);
 
     // -- Heatmap query methods
-    unsigned int getCounterAtPosition(double coord_x, double coord_y, const std::string &counter_key);
-    unsigned int getCounterAtPosition(HeatmapCoordinate coords, const std::string &counter_key);
+    unsigned int getCounterAtPosition(HeatmapCoordinate coords, const std::string &counter_key) const;
 
-    bool getCounterDataInsideRect(double lower_coord_x, double lower_coord_y, double upper_coord_x, double upper_coord_y, const std::string &counter_key, HeatmapData &out_data);
-    bool getCounterDataInsideRect(HeatmapCoordinate lower_left, HeatmapCoordinate upper_right, const std::string &counter_key, HeatmapData &out_data);
+    bool getCounterDataInsideRect(HeatmapCoordinate lower_left, HeatmapCoordinate upper_right, const std::string &counter_key, HeatmapData &out_data) const;
 
-    bool getAllCounterData(const std::string &counter_key, HeatmapData &out_data);
+    bool getAllCounterData(const std::string &counter_key, HeatmapData &out_data) const;
 
     // -- Heatmap serialization
-    bool SerializeHeatmap(char* &out_buffer, int &out_length);
+    bool SerializeHeatmap(char* &out_buffer, int &out_length) const;
     bool DeserializeHeatmap(const char* &in_buffer, int in_length);
 
   private:
     // -- Private Utility Functions
     // Adjust regular world space coordinates to the inner spatial resolution
-    HeatmapCoordinate AdjustCoordsToSpatialResolution(HeatmapCoordinate coords);
+    HeatmapCoordinate AdjustCoordsToSpatialResolution(HeatmapCoordinate coords) const;
 
+    // Looks if the counter exists, if yes, returns its Counter map, if not, a new Counter map is created and returned
+    CounterMap* getMapForCounter(const std::string &counter_key) const;
     // Adds new counter maps to the heatmap
     CounterKeyMap addNewCounter(const std::string &counter_key);
     // Looks if the counter exists, if yes, returns its Counter map, if not, a new Counter map is created and returned
     CounterMap* getOrAddMapForCounter(const std::string &counter_key);
 
     // Inner implementation of get counter inside rect. Receives already adjusted coordinates, called by public methods
-    bool getCounterDataInsideAdjustedRect(HeatmapCoordinate adjusted_lower_left, HeatmapCoordinate adjusted_upper_right, const std::string &counter_key, HeatmapData &out_data);
+    bool getCounterDataInsideAdjustedRect(HeatmapCoordinate adjusted_lower_left, HeatmapCoordinate adjusted_upper_right, const std::string &counter_key, HeatmapData &out_data) const;
 
     // Cleans the heatmap, deleting all counter maps and freeing memory
     void DestroyHeatmap();

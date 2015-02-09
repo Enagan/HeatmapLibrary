@@ -18,7 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\CounterMap.cpp" />
-    <ClCompile Include="source\Heatmap.cpp" />
+    <ClCompile Include="source\HeatmapPrivate.cpp" />
     <ClCompile Include="source\HeatmapService.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

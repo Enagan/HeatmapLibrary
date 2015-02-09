@@ -19,13 +19,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Heatmap.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="source\HeatmapService.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="source\CounterMap.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\HeatmapPrivate.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
