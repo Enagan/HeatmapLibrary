@@ -1,4 +1,9 @@
+#pragma once
+
 #include <memory>
+#include <boost\serialization\access.hpp>
+#include <boost\archive\binary_oarchive.hpp>
+#include <boost\archive\binary_iarchive.hpp>
 
 template <typename T>
 class SignedIndexVector
@@ -64,7 +69,7 @@ public:
   }
 
   T get_at(int index) const {
-    if (index + index_zero_ > end_ || index + index_zero_ < begin_)
+    if (index + index_zero_ >= end_ || index + index_zero_ < begin_)
       return T();
 
     return *(index + index_zero_);
@@ -99,13 +104,18 @@ public:
 
 private:
   void create(){ mem_begin_ = begin_ = index_zero_ = end_ = mem_end_ = nullptr; }
-  void create(siv_size size, const T& init_value){
+  void create(siv_size size, const T& init_value = T()){
     begin_ = mem_begin_ = alloc.allocate(size);
     index_zero_ = begin_ + size / 2;
     end_ = mem_end_ = begin_ + size;
     std::uninitialized_fill(begin_, mem_end_, init_value);
   }
   void create(const_iterator begin, const_iterator end, const_iterator zero_index){
+    if (begin == end){
+      create();
+      return;
+    }
+
     siv_size dist_to_zero = zero_index - begin;
     begin_ = mem_begin_ = alloc.allocate(end - begin);
     index_zero_ = begin_ + dist_to_zero;
@@ -128,7 +138,7 @@ private:
       std::uninitialized_fill(end_, index_zero_ + index + 1, init_value);
       end_ = index_zero_ + index + 1;
     }
-    else if (index + index_zero_ <= begin_) {
+    else if (index + index_zero_ < begin_) {
       std::uninitialized_fill(index + index_zero_, begin_, init_value);
       begin_ = index_zero_ + index;
     }
@@ -150,4 +160,45 @@ private:
     end_ = new_end;
     mem_end_ = new_mem_begin + new_size;
   }
+
+  // Boost serialization methods
+  // Implement functionality on how to serialize and deserialize a CounterMap into a boost Archive
+  // Used by master Heatmap class to serialize all it's instances of CounterMap
+  // Versioning can be used in case implementation changes after deployment
+  friend class boost::serialization::access;
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const
+  {
+    siv_size current_size = size();
+    int negative_index = lowest_index();
+
+    ar & current_size;
+    ar & negative_index;
+
+    for (const_iterator i = begin_; i != end_; ++i)
+      ar & *i;
+  }
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version)
+  {
+    // Ensures the vector is cleaned and deallocated before loading the serialized values
+    clean();
+
+    // Load all basic values
+    siv_size current_size;
+    int negative_index;
+
+    ar & current_size;
+    ar & negative_index;
+
+    if (current_size == 0)
+      return;
+
+    create(current_size);
+    for (iterator i = begin_; i != end_; ++i)
+      ar & *i;
+
+    index_zero_ = begin_ + (-1 * negative_index);
+  }
+  BOOST_SERIALIZATION_SPLIT_MEMBER()
 };

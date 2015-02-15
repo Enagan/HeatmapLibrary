@@ -248,7 +248,7 @@ namespace heatmap_service
     {
       return getMapForCounter(counter_key);
     }
-    catch (std::out_of_range& e)
+    catch (std::out_of_range&)
     {
       return addNewCounter(counter_key).counter_map;
     }

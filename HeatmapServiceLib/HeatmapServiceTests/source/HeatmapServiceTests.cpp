@@ -126,8 +126,9 @@ int main(int argc, char* argv[])
 bool TestSIVCreationPrefilledCreation(){
   SignedIndexVector<int> vec;
   SignedIndexVector<int> vec2(20, 0);
+  SignedIndexVector<int> vec3(vec);
 
-  return vec.size() == 0 && vec2.size() == 20 && vec2.lowest_index() == -10;
+  return vec.size() == 0 && vec2.size() == 20 && vec2.lowest_index() == -10 && vec3.size() == 0;
 }
 bool TestSIVCopyAssignment() {
   SignedIndexVector<int> vec(10, 2);
@@ -149,6 +150,7 @@ bool TestSIVIterators() {
 bool TestSIVInsertionAndGetting() {
   SignedIndexVector<int> vec;
 
+  vec[0] = 0;
   vec[1] = 1; 
   vec[2] = 4; 
   vec[-1] = -1; 

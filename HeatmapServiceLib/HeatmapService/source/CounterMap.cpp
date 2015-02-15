@@ -8,55 +8,16 @@
 
 namespace heatmap_service
 {
-  CounterMap::CounterMap() : map_columns_(nullptr)
-  {
-    InitializeMap();
-  }
+  CounterMap::CounterMap() { }
   CounterMap::CounterMap(const CounterMap& copy) : lowest_coord_x_(copy.lowest_coord_x_), highest_coord_x_(copy.highest_coord_x_),
-    lowest_coord_y_(copy.lowest_coord_y_), highest_coord_y_(copy.highest_coord_y_), map_columns_length_(copy.map_columns_length_),
-    map_columns_negative_coord_padding_(copy.map_columns_negative_coord_padding_)
-  {
-    // Copy columns
-    map_columns_ = new Column[map_columns_length_];
-    for (int i = 0; i < map_columns_length_; i++)
-    {
-      map_columns_[i].col_length = copy.map_columns_[i].col_length;
-      map_columns_[i].col_negative_coord_padding = copy.map_columns_[i].col_negative_coord_padding;
-      map_columns_[i].column = new uint32_t[map_columns_[i].col_length]();
-      for (int n = 0; n < map_columns_[i].col_length; n++)
-        map_columns_[i].column[n] = copy.map_columns_[i].column[n];
-    }
-  }
+    lowest_coord_y_(copy.lowest_coord_y_), highest_coord_y_(copy.highest_coord_y_), coord_matrix_(copy.coord_matrix_) { }
   CounterMap& CounterMap::operator=(const CounterMap& copy)
   {
     if (this != &copy)
-    {
-      DestroyMap();
-      lowest_coord_x_ = copy.lowest_coord_x_;
-      highest_coord_x_ = copy.highest_coord_x_;
-      lowest_coord_y_ = copy.lowest_coord_y_;
-      highest_coord_y_ = copy.highest_coord_y_;
-
-      map_columns_length_ = copy.map_columns_length_;
-      map_columns_negative_coord_padding_ = copy.map_columns_negative_coord_padding_;
-      map_columns_ = new Column[map_columns_length_];
-
-      // Copy columns
-      for (int i = 0; i < map_columns_length_; i++)
-      {
-        map_columns_[i].col_length = copy.map_columns_[i].col_length;
-        map_columns_[i].col_negative_coord_padding = copy.map_columns_[i].col_negative_coord_padding;
-        map_columns_[i].column = new uint32_t[map_columns_[i].col_length]();
-        for (int n = 0; n < map_columns_[i].col_length; n++)
-          map_columns_[i].column[n] = copy.map_columns_[i].column[n];
-      }
-    }
+      coord_matrix_ = copy.coord_matrix_;
     return *this;
   }
-  CounterMap::~CounterMap()
-  {
-    DestroyMap();
-  }
+  CounterMap::~CounterMap(){ }
 
   // -- Getters of current map limits
   int CounterMap::lowest_coord_x() const
@@ -90,208 +51,31 @@ namespace heatmap_service
 
     // Resize the map, in case coord_x and coord_y are outside the current scope
     try {
-      ResizeMapIfNeededFor(coord_x, coord_y);
+      coord_matrix_[coord_x][coord_y] += amount;
     }
     catch (const std::bad_alloc& e) {
       std::cout << "[HEATMAP_SERVICE] ERROR: Could not register counter for coordinate { " << coord_x << " , " << coord_y << " }. Reason: \"" << e.what() << "\". Map may be too big to maintain" << std::endl;
       return false;
     }
-
-    // Adjust coordinates from heatmap coord space, to inner index space by adding the negative padding
-    int index_coord_x = coord_x + map_columns_negative_coord_padding_;
-    int index_coord_y = coord_y + map_columns_[index_coord_x].col_negative_coord_padding;
-
-    // Increment counter
-    map_columns_[index_coord_x].column[index_coord_y] += amount;
+    CheckIfNewBoundary(coord_x, coord_y);
     return true;
   }
 
   // -- Map query methods
   uint32_t CounterMap::getValueAt(int coord_x, int coord_y) const
   {
-    // Adjust coordinates from heatmap coord space, to inner index space by adding the negative padding
-    int index_coord_x = coord_x + map_columns_negative_coord_padding_;
-    int index_coord_y = coord_y + map_columns_[index_coord_x].col_negative_coord_padding;
-
-    // If outside the current scope of the map, then no relevant value would be present, so return 0
-    if (index_coord_x < 0 || index_coord_y < 0 ||
-      index_coord_x >= map_columns_length_ || index_coord_y >= map_columns_[index_coord_x].col_length)
-      return 0;
-
-    // Otherwise, access and return value
-    return map_columns_[index_coord_x].column[index_coord_y];
+    // Get at ensures that if coordinates fall outside the current scope of the vectors, 
+    // then 0 will be returned as the default value of class uint_32_t
+    return coord_matrix_.get_at(coord_x).get_at(coord_y);
   }
 
   // -- Map Clear
   void CounterMap::ClearMap()
   {
-    DestroyMap();
-    InitializeMap();
+    coord_matrix_.clear();
   }
 
   // -- Private Utility Functions
-
-  // -- Map initial alocation and destruction
-  void CounterMap::InitializeMap()
-  {
-    if (map_columns_ != nullptr)
-      DestroyMap();
-
-    lowest_coord_x_ = 0;
-    highest_coord_x_ = 0;
-    lowest_coord_y_ = 0;
-    highest_coord_y_ = 0;
-
-    map_columns_length_ = kInitialMapSize;
-    map_columns_negative_coord_padding_ = kInitialNegativeCoordsPadding;
-    map_columns_ = new Column[map_columns_length_];
-
-    // Initialize columns
-    for (int i = 0; i < map_columns_length_; i++)
-    {
-      map_columns_[i].col_length = kInitialMapSize;
-      map_columns_[i].col_negative_coord_padding = kInitialNegativeCoordsPadding;
-      map_columns_[i].column = new uint32_t[map_columns_[i].col_length]();
-    }
-  }
-
-  void CounterMap::DestroyMap()
-  {
-    if (map_columns_ != nullptr)
-    {
-      for (int i = 0; i < map_columns_length_; i++)
-      {
-        delete[] map_columns_[i].column;
-        map_columns_[i].column = nullptr;
-      }
-    }
-    delete[] map_columns_;
-    map_columns_ = nullptr;
-  }
-
-  // -- Resize Methods
-  void CounterMap::ResizeMapIfNeededFor(int coord_x, int coord_y)
-  {
-    // Grow forward in case coord_x is larger than map
-    while (coord_x + map_columns_negative_coord_padding_ >= map_columns_length_)
-      AddColumns();
-    // Grow at beggining in case coord_x is negative and not yet contemplated in map
-    while (coord_x + map_columns_negative_coord_padding_ < 0)
-      InsertColumnsAtBeggining();
-
-
-    // As we're now sure that coord_x fits, we adjust it to index space to check if coord_y fits on the coord_x column
-    int index_coord_x = coord_x + map_columns_negative_coord_padding_;
-
-    // Grow forward in case coord_y is larger than column
-    while (coord_y + map_columns_[index_coord_x].col_negative_coord_padding >= map_columns_[index_coord_x].col_length)
-      GrowColumnAtEnd(index_coord_x);
-    // Grow at beggining in case coord_y is negative and not yet contemplated in column
-    while (coord_y + map_columns_[index_coord_x].col_negative_coord_padding < 0)
-      GrowColumnAtBeggining(index_coord_x);
-
-
-    // Define if coordinate is new boundary
-    CheckIfNewBoundary(coord_x, coord_y);
-  }
-
-  // -- Resize column array
-  void CounterMap::AddColumns()
-  {
-    // Double the size
-    int new_length = map_columns_length_ * 2;
-    Column* new_map_columns = new Column[new_length];
-
-    // Copy values from old at first half
-    for (int i = 0; i < map_columns_length_; i++)
-    {
-      new_map_columns[i] = map_columns_[i];
-    }
-    // Initialize new columns at second half
-    for (int i = map_columns_length_; i < new_length; i++)
-    {
-      new_map_columns[i].col_length = kInitialMapSize;
-      new_map_columns[i].col_negative_coord_padding = kInitialNegativeCoordsPadding;
-      new_map_columns[i].column = new uint32_t[new_map_columns[i].col_length]();
-    }
-
-    delete[] map_columns_;
-    map_columns_ = new_map_columns;
-    map_columns_length_ = new_length;
-  }
-
-  void CounterMap::InsertColumnsAtBeggining()
-  {
-    // Double the size
-    int new_length = map_columns_length_ * 2;
-    Column* new_map_columns = new Column[new_length];
-
-    // Initialize new columns at first half
-    for (int i = 0; i < map_columns_length_; i++)
-    {
-      new_map_columns[i].col_length = kInitialMapSize;
-      new_map_columns[i].col_negative_coord_padding = kInitialNegativeCoordsPadding;
-      new_map_columns[i].column = new uint32_t[new_map_columns[i].col_length]();
-    }
-    // Copy values from old at second half
-    for (int i = map_columns_length_; i < new_length; i++)
-    {
-      new_map_columns[i] = map_columns_[i - map_columns_length_];
-    }
-
-    delete[] map_columns_;
-    map_columns_ = new_map_columns;
-    // Update negative coord padding. Since the size was doubled, we always add the old size to the previous padding
-    map_columns_negative_coord_padding_ += map_columns_length_;
-    map_columns_length_ = new_length;
-  }
-
-  // -- Resize specific column at provided x index
-  void CounterMap::GrowColumnAtEnd(unsigned int index_coord_x)
-  {
-    // Just in case the respective column to resize doesn't exist yet.
-    // Should never happen though
-    while ((int)index_coord_x >= map_columns_length_)
-      AddColumns();
-
-    int new_length = map_columns_[index_coord_x].col_length * 2;
-    // Initialize whole array
-    uint32_t* new_column = new uint32_t[new_length]();
-
-    // Copy values from old column
-    for (int i = 0; i < map_columns_[index_coord_x].col_length; i++)
-    {
-      new_column[i] = map_columns_[index_coord_x].column[i];
-    }
-
-    delete[] map_columns_[index_coord_x].column;
-    map_columns_[index_coord_x].column = new_column;
-    map_columns_[index_coord_x].col_length = new_length;
-  }
-
-  void CounterMap::GrowColumnAtBeggining(unsigned int index_coord_x)
-  {
-    // Just in case the respective column to resize doesn't exist yet.
-    // Should never happen though
-    while ((int)index_coord_x >= map_columns_length_)
-      AddColumns();
-
-    int new_length = map_columns_[index_coord_x].col_length * 2;
-    // Initialize whole array
-    uint32_t* new_column = new uint32_t[new_length]();
-
-    // Copy values from old column, to the second half of the new column
-    for (int i = map_columns_[index_coord_x].col_length; i < new_length; i++)
-    {
-      new_column[i] = map_columns_[index_coord_x].column[i - map_columns_[index_coord_x].col_length];
-    }
-
-    delete[] map_columns_[index_coord_x].column;
-    map_columns_[index_coord_x].column = new_column;
-    // Update negative coord padding. Since the size was doubled, we always add the old size to the previous padding
-    map_columns_[index_coord_x].col_negative_coord_padding += map_columns_[index_coord_x].col_length;
-    map_columns_[index_coord_x].col_length = new_length;
-  }
 
   // -- Checks if coordinate is a new boundary for the Map. If so, replace previous highest/lowest values
   void CounterMap::CheckIfNewBoundary(int coord_x, int coord_y)

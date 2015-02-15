@@ -15,18 +15,10 @@
 #include <boost\archive\binary_oarchive.hpp>
 #include <boost\archive\binary_iarchive.hpp>
 
+#include "SignedIndexVector.hpp"
+
 namespace heatmap_service
 {
-
-  // Defines a column in the CounterMap.
-  // Each column has it's own independent size, only increased from the initial value if the specific column actually requires more space
-  struct Column
-  {
-    int col_length;
-    int col_negative_coord_padding;
-    uint32_t* column;
-  };
-
   // -- CounterMap Class is a helper class for the Heatmap, capable of holding the spatial counter data for the Heatmap it's part of.
   // It doesn't need to know map size at instantiation, instead dinamically resizing itself to fit the needs of the Heatmap.
   // It can resize specific columns independently of others, keeping memory footprint as low as possible.
@@ -34,16 +26,7 @@ namespace heatmap_service
   class CounterMap
   {
   private:
-    // Initial values for the columns array, as well as each column inside
-    // An initial size of 1 provided the best performance/space relation in tests
-    const int kInitialMapSize = 1;
-    const int kInitialNegativeCoordsPadding = 0;
-
-    Column* map_columns_;
-    int map_columns_length_;
-    // Negative coordinates padding defines how many indexes, at the start of the array, are negative coordinates.
-    // another way to see this, is that it holds the index of coordinate 0
-    int map_columns_negative_coord_padding_;
+    SignedIndexVector< SignedIndexVector<uint32_t> > coord_matrix_;
 
     // Highest and lowest values currently present in the map. Usefull when querying about full size
     int lowest_coord_x_;
@@ -79,25 +62,6 @@ namespace heatmap_service
   private:
     // -- Private Utility Functions
 
-    // -- Map initial alocation and destruction
-    void InitializeMap();
-    void DestroyMap();
-
-    // -- Resize Methods
-    void ResizeMapIfNeededFor(int coord_x, int coord_y);
-
-    // -- Resize column array, adding more columns at the end, in case of a simple resize
-    // Or at the beggining, in case a new lowest negative X coordinate was sent
-    // On resize, size is always double, in an attempt to more easily reach the full value of the map, in an attempt to save resizing calls.
-    void AddColumns();
-    void InsertColumnsAtBeggining();
-
-    // -- Resize specific column at provided x index, adding more space at the end, in case of a simple resize
-    // Or at the beggining, in case a new lowest negative Y coordinate was sent
-    // On resize, size is always doubled, in an attempt to more easily reach the full value of the map, in an attempt to save resizing calls.
-    void GrowColumnAtEnd(unsigned int index_coord_x);
-    void GrowColumnAtBeggining(unsigned int index_coord_x);
-
     // -- Checks if coordinate is a new boundary for the Map. If so, replace previous highest/lowest values
     void CheckIfNewBoundary(int coord_x, int coord_y);
 
@@ -110,54 +74,24 @@ namespace heatmap_service
     void save(Archive & ar, const unsigned int version) const
     {
       // Save all basic values
-      ar & map_columns_length_;
-      ar & map_columns_negative_coord_padding_;
       ar & lowest_coord_x_;
       ar & lowest_coord_y_;
       ar & highest_coord_x_;
       ar & highest_coord_y_;
-
-      // Serialize each column
-      for (int i = 0; i < map_columns_length_; i++)
-      {
-        ar & map_columns_[i].col_length;
-        ar & map_columns_[i].col_negative_coord_padding;
-
-        // Serialize each value inside the column
-        for (int n = 0; n < map_columns_[i].col_length; n++)
-        {
-          ar & map_columns_[i].column[n];
-        }
-      }
+      ar & coord_matrix_;
     }
     template<class Archive>
     void load(Archive & ar, const unsigned int version)
     {
       // Ensures map is cleaned and deallocated before loading the serialized values
-      DestroyMap();
+      ClearMap();
 
       // Load all basic values
-      ar & map_columns_length_;
-      ar & map_columns_negative_coord_padding_;
       ar & lowest_coord_x_;
       ar & lowest_coord_y_;
       ar & highest_coord_x_;
       ar & highest_coord_y_;
-
-      // Allocate column array and load all columns
-      map_columns_ = new Column[map_columns_length_];
-      for (int i = 0; i < map_columns_length_; i++)
-      {
-        ar & map_columns_[i].col_length;
-        ar & map_columns_[i].col_negative_coord_padding;
-
-        // Allocate data in column and all columns accumulators
-        map_columns_[i].column = new uint32_t[map_columns_[i].col_length]();
-        for (int n = 0; n < map_columns_[i].col_length; n++)
-        {
-          ar & map_columns_[i].column[n];
-        }
-      }
+      ar & coord_matrix_;
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
   };
