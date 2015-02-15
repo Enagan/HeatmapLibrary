@@ -23,8 +23,11 @@ private:
 
 public:
   SignedIndexVector() { create(); }
+
   explicit SignedIndexVector(siv_size pre_allocate, const T& initialize_with = T()){ create(pre_allocate, initialize_with); }
+
   SignedIndexVector(const SignedIndexVector& copy) { create(copy.cbegin(), copy.cend(), copy.cindex_zero()); }
+
   SignedIndexVector& operator=(const SignedIndexVector& copy) {
     if (this != &copy)
     {
@@ -33,6 +36,7 @@ public:
     }
     return *this;
   }
+
   ~SignedIndexVector(){ destroy(); }
 
   iterator begin(){ return begin_; }

@@ -45,11 +45,10 @@ namespace heatmap_service
 
   bool CounterMap::AddAmountAt(int coord_x, int coord_y, int amount)
   {
-    //If the amount is 0 or lesser, we don't need to register to do anything
+    //If the amount is 0 or lesser, we don't need to do anything
     if (amount <= 0)
       return true;
 
-    // Resize the map, in case coord_x and coord_y are outside the current scope
     try {
       coord_matrix_[coord_x][coord_y] += amount;
     }
@@ -64,8 +63,8 @@ namespace heatmap_service
   // -- Map query methods
   uint32_t CounterMap::getValueAt(int coord_x, int coord_y) const
   {
-    // Get at ensures that if coordinates fall outside the current scope of the vectors, 
-    // then 0 will be returned as the default value of class uint_32_t
+    // Get_at ensures that if coordinates fall outside the current scope of the vectors, 
+    // then 0 will be returned as the default value of class uint_32_t, and no extra memory will be allocated
     return coord_matrix_.get_at(coord_x).get_at(coord_y);
   }
 
