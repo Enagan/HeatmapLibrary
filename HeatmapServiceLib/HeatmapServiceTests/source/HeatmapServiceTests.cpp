@@ -5,6 +5,8 @@
 #include <iostream>
 #include <ctime>
 #include "HeatmapService.h"
+#include "SignedIndexVector.hpp"
+
 
 using namespace std;
 
@@ -16,6 +18,12 @@ const std::string kSkillsUsedKey = "skills_used";
 const std::string kDodgesKey = "dodge_rolls";
 
 // Forward declaration of test methods
+bool TestSIVCreationPrefilledCreation();
+bool TestSIVCopyAssignment();
+bool TestSIVIterators();
+bool TestSIVInsertionAndGetting();
+bool TestSIVClearAndClean();
+
 bool TestSimpleRegisterRead();
 bool TestRegisterReadMultiple();
 bool TestRegisterReadMultipleNonDefaultResolution();
@@ -36,7 +44,7 @@ void StressTestMillionRegisters10per5Coords();
 void StressTestMillionRegisters5kper5kOnlyNegativeCoords();
 void StressTestThousandRegistriesFractionalResolution();
 
-void DumpHeatmapData(heatmap_service::HeatmapData &data)
+void DumpHeatmapData(const heatmap_service::HeatmapData &data)
 {
   cout << endl << "---------------------------------------" << endl << endl;
   for (int y = (int)data.data_size.height - 1; y >= 0; y--)
@@ -56,6 +64,16 @@ void RunUnitTests()
 {
   cout << "-------------- Unit Tests -----------------" << endl << endl;
 
+  cout << "######## Signed Index Vector ########" << endl << endl;
+  cout << "TestSIVCreationPrefilledCreation: [" << (TestSIVCreationPrefilledCreation() ? "PASSED" : "FAILED") << "]" << endl;
+  cout << "TestSIVCopyAssignment: [" << (TestSIVCopyAssignment() ? "PASSED" : "FAILED") << "]" << endl;
+  cout << "TestSIVIterators: [" << (TestSIVIterators() ? "PASSED" : "FAILED") << "]" << endl;
+  cout << "TestSIVInsertionAndGetting: [" << (TestSIVInsertionAndGetting() ? "PASSED" : "FAILED") << "]" << endl;
+  cout << "TestSIVClearAndClean: [" << (TestSIVClearAndClean() ? "PASSED" : "FAILED") << "]" << endl;
+
+  cout << endl;
+
+  cout << "######## Heatmap ########" << endl << endl;
   cout << "TestSimpleRegisterRead: [" << (TestSimpleRegisterRead() ? "PASSED" : "FAILED") << "]" << endl;
   cout << "TestRegisterReadMultiple: [" << (TestRegisterReadMultiple() ? "PASSED" : "FAILED") << "]" << endl;
   cout << "TestRegisterReadMultipleNonDefaultResolution: [" << (TestRegisterReadMultipleNonDefaultResolution() ? "PASSED" : "FAILED") << "]" << endl;
@@ -92,6 +110,10 @@ void RunStressTests()
 
 int main(int argc, char* argv[])
 {
+  SignedIndexVector<int> testVec;
+  testVec[10] = 5;
+
+
   RunUnitTests();
   RunStressTests();
   
@@ -99,6 +121,49 @@ int main(int argc, char* argv[])
   cin.get();
 
 	return 0;
+}
+
+bool TestSIVCreationPrefilledCreation(){
+  SignedIndexVector<int> vec;
+  SignedIndexVector<int> vec2(20, 0);
+
+  return vec.size() == 0 && vec2.size() == 20 && vec2.lowest_index() == -10;
+}
+bool TestSIVCopyAssignment() {
+  SignedIndexVector<int> vec(10, 2);
+  SignedIndexVector<int> vec2(vec);
+  SignedIndexVector<int> vec3;
+  vec3 = vec;
+
+  return vec.size() == 10 && vec2.size() == 10 && vec3.size() == 10 &&
+    vec[0] == 2 && vec2[0] == 2 && vec3[0] == 2;
+}
+bool TestSIVIterators() {
+  SignedIndexVector<int> vec(10, 1);
+  int sum = 0;
+  for (SignedIndexVector<int>::iterator iter = vec.begin(); iter != vec.end(); ++iter)
+    sum += *iter;
+
+  return sum == 10;
+}
+bool TestSIVInsertionAndGetting() {
+  SignedIndexVector<int> vec;
+
+  vec[1] = 1; 
+  vec[2] = 4; 
+  vec[-1] = -1; 
+  vec[-2] = -2;
+
+  int size = vec.size();
+  int alloc_size = vec.allocation_size();
+
+  return (vec[1] + vec[2] + vec[-1] + vec.get_at(-2)) == 2 && size == 5;
+}
+bool TestSIVClearAndClean() {
+  SignedIndexVector<int> vec(10, 1);
+  vec.clean();
+
+  return vec.size() == 0;
 }
 
 

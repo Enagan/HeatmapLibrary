@@ -9,6 +9,9 @@
     <ClInclude Include="header\CounterMap.hpp">
       <Filter>header</Filter>
     </ClInclude>
+    <ClInclude Include="containers\SignedIndexVector.hpp">
+      <Filter>containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">
@@ -16,6 +19,9 @@
     </Filter>
     <Filter Include="header">
       <UniqueIdentifier>{f2adc06c-fff2-46ff-84d6-90480ee61a71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="containers">
+      <UniqueIdentifier>{0e31261e-f82e-4571-a143-0e20bac74d16}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
