@@ -6,23 +6,31 @@
 #include <ctime>
 #include "HeatmapService.h"
 #include "SignedIndexVector.hpp"
+#include "HashMap.hpp"
 
 
 using namespace std;
+using namespace heatmap_service;
 
-const std::string kDeathsCounterKey = "deaths";
-const std::string kGoldObtainedCounterKey = "gold_obtained";
-const std::string kExperienceGainedCounterKey = "xp_gained";
-const std::string kKillsCounterKey = "kills";
-const std::string kSkillsUsedKey = "skills_used";
-const std::string kDodgesKey = "dodge_rolls";
+const string kDeathsCounterKey = "deaths";
+const string kGoldObtainedCounterKey = "gold_obtained";
+const string kExperienceGainedCounterKey = "xp_gained";
+const string kKillsCounterKey = "kills";
+const string kSkillsUsedKey = "skills_used";
+const string kDodgesKey = "dodge_rolls";
 
 // Forward declaration of test methods
+
 bool TestSIVCreationPrefilledCreation();
 bool TestSIVCopyAssignment();
 bool TestSIVIterators();
 bool TestSIVInsertionAndGetting();
 bool TestSIVClearAndClean();
+
+bool TestHashMapCreation();
+bool TestHashMapPlacementAndRetrieval();
+bool TestHashMapCopyAssignment();
+bool TestHashMapCollision();
 
 bool TestSimpleRegisterRead();
 bool TestRegisterReadMultiple();
@@ -70,6 +78,14 @@ void RunUnitTests()
   cout << "TestSIVIterators: [" << (TestSIVIterators() ? "PASSED" : "FAILED") << "]" << endl;
   cout << "TestSIVInsertionAndGetting: [" << (TestSIVInsertionAndGetting() ? "PASSED" : "FAILED") << "]" << endl;
   cout << "TestSIVClearAndClean: [" << (TestSIVClearAndClean() ? "PASSED" : "FAILED") << "]" << endl;
+
+  cout << endl;
+
+  cout << "######## Hashmap ########" << endl << endl;
+  cout << "TestHashMapCreation: [" << (TestHashMapCreation() ? "PASSED" : "FAILED") << "]" << endl;
+  cout << "TestHashMapPlacementAndRetrieval: [" << (TestHashMapPlacementAndRetrieval() ? "PASSED" : "FAILED") << "]" << endl;
+  cout << "TestHashMapCopyAssignment: [" << (TestHashMapCopyAssignment() ? "PASSED" : "FAILED") << "]" << endl;
+  cout << "TestHashMapCollision: [" << (TestHashMapCollision() ? "PASSED" : "FAILED") << "]" << endl;
 
   cout << endl;
 
@@ -131,13 +147,13 @@ bool TestSIVCreationPrefilledCreation(){
   return vec.size() == 0 && vec2.size() == 20 && vec2.lowest_index() == -10 && vec3.size() == 0;
 }
 bool TestSIVCopyAssignment() {
-  SignedIndexVector<int> vec(10, 2);
-  SignedIndexVector<int> vec2(vec);
-  SignedIndexVector<int> vec3;
+  SignedIndexVector<string> vec(10, "Derp");
+  SignedIndexVector<string> vec2(vec);
+  SignedIndexVector<string> vec3;
   vec3 = vec;
 
   return vec.size() == 10 && vec2.size() == 10 && vec3.size() == 10 &&
-    vec[0] == 2 && vec2[0] == 2 && vec3[0] == 2;
+    vec[0] == "Derp" && vec2[0] == "Derp" && vec3[0] == "Derp";
 }
 bool TestSIVIterators() {
   SignedIndexVector<int> vec(10, 1);
@@ -152,7 +168,7 @@ bool TestSIVInsertionAndGetting() {
 
   vec[0] = 0;
   vec[1] = 1; 
-  vec[2] = 4; 
+  vec.push_back(4);
   vec[-1] = -1; 
   vec[-2] = -2;
 
@@ -166,6 +182,62 @@ bool TestSIVClearAndClean() {
   vec.clean();
 
   return vec.size() == 0;
+}
+
+struct StringLenHash{
+  int operator()(const std::string& s) { return s.size(); }
+};
+
+bool TestHashMapCreation() {
+  Hashmap<string, int, StringLenHash> hash1;
+  return !hash1.has_key(kDeathsCounterKey);
+}
+bool TestHashMapPlacementAndRetrieval() {
+  Hashmap<string, int, StringLenHash> hash1;
+
+  hash1[kDeathsCounterKey] = 2;
+  hash1[kDeathsCounterKey] = 0;
+
+  hash1[kGoldObtainedCounterKey] = 4;
+  hash1[kExperienceGainedCounterKey] = 10;
+  bool test1 = hash1.has_key(kDeathsCounterKey);
+  return hash1[kDeathsCounterKey] == 0 && hash1[kGoldObtainedCounterKey] == 4 && hash1[kExperienceGainedCounterKey] == 10;
+}
+bool TestHashMapCopyAssignment() {
+  Hashmap<string, int, StringLenHash> hash1;
+  Hashmap<string, int, StringLenHash> hash2(hash1);
+  Hashmap<string, int, StringLenHash> hash3;
+
+  hash1[kDeathsCounterKey] = 2;
+  hash1[kDeathsCounterKey] = 0;
+  hash3[kDeathsCounterKey] = 20;
+
+  hash1[kGoldObtainedCounterKey] = 4;
+  hash1[kExperienceGainedCounterKey] = 10;
+
+  hash3 = hash1;
+
+  Hashmap<string, int, StringLenHash> hash4(hash1);
+  bool t1 = !hash2.has_key(kDeathsCounterKey);
+  bool t2 = hash3[kDeathsCounterKey] == 0;
+  bool t3 = hash4[kExperienceGainedCounterKey] == 10;
+  return t1 && t2 && t3;
+}
+bool TestHashMapCollision(){
+  // Ridiculous high collision hash function object
+  struct StringHashFunc{
+    int operator()(string s) { return s.size() % 2 - 1; }
+  };
+
+  Hashmap<string, string, StringHashFunc> hash1;
+
+  hash1[kDeathsCounterKey] = "a";
+  hash1[kGoldObtainedCounterKey] = "b";
+  hash1[kExperienceGainedCounterKey] = "c";
+
+  return hash1[kDeathsCounterKey] == "a" &&
+    hash1[kGoldObtainedCounterKey] == "b" &&
+    hash1[kExperienceGainedCounterKey] == "c";
 }
 
 

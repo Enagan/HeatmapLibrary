@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="containers\HashMap.hpp" />
     <ClInclude Include="containers\SignedIndexVector.hpp" />
     <ClInclude Include="header\CounterMap.hpp" />
     <ClInclude Include="header\HeatmapPrivate.h" />
