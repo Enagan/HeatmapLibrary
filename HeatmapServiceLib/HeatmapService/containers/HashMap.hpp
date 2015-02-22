@@ -5,6 +5,10 @@
 #include <functional>
 #include <exception>
 
+#include <boost\serialization\access.hpp>
+#include <boost\archive\binary_oarchive.hpp>
+#include <boost\archive\binary_iarchive.hpp>
+
 namespace heatmap_service
 {
   template < typename KeyT, typename ValT, typename HashFunc>
@@ -27,6 +31,15 @@ namespace heatmap_service
         }
         return *this;
       }
+
+      // Boost serialization methods
+      friend class boost::serialization::access;
+      template<class Archive>
+      void serialize(Archive &ar, const unsigned int version)
+      {
+        ar & key;
+        ar & val;
+      }
     };
 
     SignedIndexVector< SignedIndexVector<KeyValPair> > map_;
@@ -45,36 +58,77 @@ namespace heatmap_service
     }
 
     const ValT& operator[] (const KeyT& key) const {
-      return GetOrCreateValForKey(key);
+      return GetValForKey(key);
     }
 
     bool has_key(const KeyT& key) const {
       return map_.get_at(HashFunc()(key)).size() != 0;
     }
 
-    void clear(){ map_.clear() }
+    void clear(){ map_.clear(); }
 
-    void clean(){ map_.clean() }
+    void clean(){ map_.clean(); }
   private:
 
     ValT& GetOrCreateValForKey(const KeyT& key){
       int hash_result = HashFunc()(key);
-      if (map_[hash_result].size() == 0)
+      SignedIndexVector<KeyValPair>& hash_box = map_[hash_result];
+      if (hash_box.size() == 0)
       {
-        map_[hash_result].push_back(KeyValPair(key, ValT()));
-        return map_[hash_result][0].val;
+        hash_box.push_back(KeyValPair(key, ValT()));
+        return hash_box[0].val;
       }
-      else
-      {
-        SignedIndexVector<KeyValPair>::iterator elem = std::find_if(map_[hash_result].begin(), 
-                                                                    map_[hash_result].end(), [&key](const KeyValPair& pair) -> bool { return pair.key == key; });
-        if (elem != map_[hash_result].end())
+      else if (hash_box.size() == 1){
+        return hash_box[0].val;
+      }
+      else {
+        SignedIndexVector<KeyValPair>::iterator elem = std::find_if(hash_box.begin(),
+          hash_box.end(), [&key](const KeyValPair& pair) -> bool { return pair.key == key; });
+        if (elem != hash_box.end())
           return (*elem).val;
 
-        map_[hash_result].push_back(KeyValPair(key, ValT()));
-        return (map_[hash_result].end() - 1)->val;
+        hash_box.push_back(KeyValPair(key, ValT()));
+        return (hash_box.end() - 1)->val;
       }
     }
 
+    const ValT& GetValForKey(const KeyT& key) const{
+      if (!has_key(key))
+        throw std::out_of_range("Hashmap ERROR: Call to const operator[] with inexistant key");
+
+      int hash_result = HashFunc()(key);
+      const SignedIndexVector<KeyValPair>& hash_box = map_[hash_result];
+      if (hash_box.size() == 1)
+        return hash_box[0].val;
+
+      SignedIndexVector<KeyValPair>::const_iterator elem = std::find_if(hash_box.cbegin(),
+        hash_box.cend(), [&key](const KeyValPair& pair) -> bool { return pair.key == key; });
+      if (elem != hash_box.cend())
+        return elem->val;
+      else
+        throw std::out_of_range("Hashmap ERROR: Call to const operator[] with inexistant key");
+    }
+
+
+    // Boost serialization methods
+    // Implement functionality on how to serialize and deserialize a CounterMap into a boost Archive
+    // Used by master Heatmap class to serialize all it's instances of CounterMap
+    // Versioning can be used in case implementation changes after deployment
+    friend class boost::serialization::access;
+    template<class Archive>
+    void save(Archive & ar, const unsigned int version) const
+    {
+      ar & map_;
+    }
+    template<class Archive>
+    void load(Archive & ar, const unsigned int version)
+    {
+      // Ensures the vector is cleaned and deallocated before loading the serialized values
+      clean();
+
+      // Load all basic values
+      ar & map_;
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
   };
 }
