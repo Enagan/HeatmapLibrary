@@ -15,6 +15,9 @@
     <ClInclude Include="containers\HashMap.hpp">
       <Filter>containers</Filter>
     </ClInclude>
+    <ClInclude Include="containers\LinearSearchMap.hpp">
+      <Filter>containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">

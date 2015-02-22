@@ -29,13 +29,13 @@ namespace heatmap_service
 
     explicit SignedIndexVector(siv_size pre_allocate, const T& initialize_with = T()){ create(pre_allocate, initialize_with); }
 
-    SignedIndexVector(const SignedIndexVector& copy) { create(copy.cbegin(), copy.cend(), copy.cindex_zero()); }
+    SignedIndexVector(const SignedIndexVector& copy) { create(copy.begin(), copy.end(), copy.index_zero()); }
 
     SignedIndexVector& operator=(const SignedIndexVector& copy) {
       if (this != &copy)
       {
         destroy();
-        create(copy.cbegin(), copy.cend(), copy.cindex_zero());
+        create(copy.begin(), copy.end(), copy.index_zero());
       }
       return *this;
     }
@@ -43,13 +43,13 @@ namespace heatmap_service
     ~SignedIndexVector(){ destroy(); }
 
     iterator begin(){ return begin_; }
-    const_iterator cbegin() const { return begin_; }
+    const_iterator begin() const { return begin_; }
 
     iterator index_zero(){ return index_zero_; }
-    const_iterator cindex_zero() const { return index_zero_; }
+    const_iterator index_zero() const { return index_zero_; }
 
     iterator end(){ return end_; }
-    const_iterator cend() const { return end_; }
+    const_iterator end() const { return end_; }
 
     int lowest_index() const { return begin_ - index_zero_; }
     siv_size size() const { return end_ - begin_; }
@@ -59,7 +59,7 @@ namespace heatmap_service
       if (index_zero_ + index >= mem_end_ || index_zero_ + index <= mem_begin_)
         grow((abs(index) + 2 )* 2);
 
-      if (index + index_zero_ >= end_ || index + index_zero_ <= begin_)
+      if (index + index_zero_ >= end_ || index + index_zero_ < begin_)
         initialize_to_index(index);
 
       return *(index + index_zero_);
@@ -81,7 +81,7 @@ namespace heatmap_service
 
     void push_back(const T& value){
       if (end_ == mem_end_)
-        grow( (siv_size)((mem_end_ - mem_begin_)*1.5) );
+        grow( (siv_size)((mem_end_ - mem_begin_)*2) );
 
       std::uninitialized_fill(end_, end_ + 1, value);
       ++end_;
@@ -89,7 +89,7 @@ namespace heatmap_service
 
     void push_front(const T& value){
       if (begin_ == mem_begin_)
-        grow( (siv_size)((mem_end_ - mem_begin_)*1.5) );
+        grow( (siv_size)((mem_end_ - mem_begin_)*2) );
 
       std::uninitialized_fill(begin_ - 1, begin_, value);
       --begin_;
@@ -153,7 +153,7 @@ namespace heatmap_service
     }
 
     void grow(siv_size needed_size = 0){
-      siv_size curr_size = size();
+      siv_size curr_size = allocation_size();
       siv_size new_size = (siv_size)((mem_end_ - mem_begin_)*1.5 > 2 ? (mem_end_ - mem_begin_)*1.5 : 2);
       while (new_size < needed_size)
         new_size = (siv_size)(new_size*1.5);
