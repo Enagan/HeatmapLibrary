@@ -83,6 +83,12 @@
     <Report>
       <Path>HeatmapServiceTests150222(6).vspx</Path>
     </Report>
+    <Report>
+      <Path>HeatmapServiceTests150222(7).vspx</Path>
+    </Report>
+    <Report>
+      <Path>HeatmapServiceTests150222(8).vspx</Path>
+    </Report>
   </Reports>
   <Launches>
     <ProjBinary>

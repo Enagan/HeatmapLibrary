@@ -13,7 +13,7 @@
 namespace heatmap_service
 {
   template < typename KeyT, typename ValT, typename HashFunc>
-  class Hashmap
+  class SimpleHashmap
   {
   private:
 
@@ -25,8 +25,7 @@ namespace heatmap_service
       KeyValPair(KeyT k, ValT v) : key(new KeyT(k)), val(new ValT(v)) {}
       KeyValPair(const KeyValPair& copy) : key(copy.key), val(copy.val) {}
       KeyValPair& operator=(const KeyValPair& copy){
-        if (this != &copy)
-        {
+        if (this != &copy) {
           key = copy.key;
           val = copy.val;
         }
@@ -36,14 +35,12 @@ namespace heatmap_service
       // Boost serialization methods
       friend class boost::serialization::access;
       template<class Archive>
-      void save(Archive & ar, const unsigned int version) const
-      {
+      void save(Archive & ar, const unsigned int version) const {
         ar & *key;
         ar & *val;
       }
       template<class Archive>
-      void load(Archive & ar, const unsigned int version)
-      {
+      void load(Archive & ar, const unsigned int version) {
         KeyT read_key;
         ValT read_val;
 
@@ -59,9 +56,9 @@ namespace heatmap_service
     SignedIndexVector< SignedIndexVector<KeyValPair> > map_;
 
   public:
-    Hashmap() {}
-    Hashmap(const Hashmap& copy) : map_(copy.map_) {}
-    Hashmap& operator=(const Hashmap& copy) {
+    SimpleHashmap() {}
+    SimpleHashmap(const SimpleHashmap& copy) : map_(copy.map_) {}
+    SimpleHashmap& operator=(const SimpleHashmap& copy) {
       if (this != &copy)
         map_ = copy.map_;
       return *this;
@@ -87,13 +84,20 @@ namespace heatmap_service
     ValT& GetOrCreateValForKey(const KeyT& key){
       int hash_result = HashFunc()(key);
       SignedIndexVector<KeyValPair>& hash_box = map_[hash_result];
-      if (hash_box.size() == 0)
+      int hash_box_size = hash_box.size();
+      if (hash_box_size == 0)
       {
         hash_box.push_back(KeyValPair(key, ValT()));
         return *(hash_box[0].val);
       }
-      else if (hash_box.size() == 1){
-        return *(hash_box[0].val);
+      else if (hash_box_size == 1){
+        if (*(hash_box[0].key) == key)
+          return *(hash_box[0].val);
+        else
+        {
+          hash_box.push_back(KeyValPair(key, ValT()));
+          return *(hash_box[1].val);
+        }
       }
       else {
         SignedIndexVector<KeyValPair>::iterator elem = std::find_if(hash_box.begin(),
@@ -108,7 +112,7 @@ namespace heatmap_service
 
     const ValT& GetValForKey(const KeyT& key) const{
       if (!has_key(key))
-        throw std::out_of_range("Hashmap ERROR: Call to const operator[] with inexistant key");
+        throw std::out_of_range("SimpleHashmap ERROR: Call to const operator[] with inexistant key");
 
       int hash_result = HashFunc()(key);
       const SignedIndexVector<KeyValPair>& hash_box = map_[hash_result];
@@ -120,7 +124,7 @@ namespace heatmap_service
       if (elem != hash_box.cend())
         return *(elem->val);
       else
-        throw std::out_of_range("Hashmap ERROR: Call to const operator[] with inexistant key");
+        throw std::out_of_range("SimpleHashmap ERROR: Call to const operator[] with inexistant key");
     }
 
 

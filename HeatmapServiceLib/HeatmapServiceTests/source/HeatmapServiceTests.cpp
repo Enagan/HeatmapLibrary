@@ -81,7 +81,7 @@ void RunUnitTests()
 
   cout << endl;
 
-  cout << "######## Hashmap ########" << endl << endl;
+  cout << "######## SimpleHashmap ########" << endl << endl;
   cout << "TestHashMapCreation: [" << (TestHashMapCreation() ? "PASSED" : "FAILED") << "]" << endl;
   cout << "TestHashMapPlacementAndRetrieval: [" << (TestHashMapPlacementAndRetrieval() ? "PASSED" : "FAILED") << "]" << endl;
   cout << "TestHashMapCopyAssignment: [" << (TestHashMapCopyAssignment() ? "PASSED" : "FAILED") << "]" << endl;
@@ -189,11 +189,11 @@ struct StringLenHash{
 };
 
 bool TestHashMapCreation() {
-  Hashmap<string, int, StringLenHash> hash1;
+  SimpleHashmap<string, int, StringLenHash> hash1;
   return !hash1.has_key(kDeathsCounterKey);
 }
 bool TestHashMapPlacementAndRetrieval() {
-  Hashmap<string, int, StringLenHash> hash1;
+  SimpleHashmap<string, int, StringLenHash> hash1;
 
   hash1[kDeathsCounterKey] = 2;
   hash1[kDeathsCounterKey] = 0;
@@ -204,9 +204,9 @@ bool TestHashMapPlacementAndRetrieval() {
   return hash1[kDeathsCounterKey] == 0 && hash1[kGoldObtainedCounterKey] == 4 && hash1[kExperienceGainedCounterKey] == 10;
 }
 bool TestHashMapCopyAssignment() {
-  Hashmap<string, int, StringLenHash> hash1;
-  Hashmap<string, int, StringLenHash> hash2(hash1);
-  Hashmap<string, int, StringLenHash> hash3;
+  SimpleHashmap<string, int, StringLenHash> hash1;
+  SimpleHashmap<string, int, StringLenHash> hash2(hash1);
+  SimpleHashmap<string, int, StringLenHash> hash3;
 
   hash1[kDeathsCounterKey] = 2;
   hash1[kDeathsCounterKey] = 0;
@@ -217,7 +217,7 @@ bool TestHashMapCopyAssignment() {
 
   hash3 = hash1;
 
-  Hashmap<string, int, StringLenHash> hash4(hash1);
+  SimpleHashmap<string, int, StringLenHash> hash4(hash1);
   bool t1 = !hash2.has_key(kDeathsCounterKey);
   bool t2 = hash3[kDeathsCounterKey] == 0;
   bool t3 = hash4[kExperienceGainedCounterKey] == 10;
@@ -229,15 +229,19 @@ bool TestHashMapCollision(){
     int operator()(string s) { return s.size() % 2 - 1; }
   };
 
-  Hashmap<string, string, StringHashFunc> hash1;
+  SimpleHashmap<string, string, StringHashFunc> hash1;
 
   hash1[kDeathsCounterKey] = "a";
   hash1[kGoldObtainedCounterKey] = "b";
   hash1[kExperienceGainedCounterKey] = "c";
 
-  return hash1[kDeathsCounterKey] == "a" &&
-    hash1[kGoldObtainedCounterKey] == "b" &&
-    hash1[kExperienceGainedCounterKey] == "c";
+  std::string a = hash1[kDeathsCounterKey];
+  std::string b = hash1[kGoldObtainedCounterKey];
+  std::string c = hash1[kExperienceGainedCounterKey];
+
+  return  a == "a" &&
+    b == "b" &&
+    c == "c";
 }
 
 

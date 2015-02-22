@@ -27,7 +27,7 @@ namespace heatmap_service
   class HeatmapPrivate
   {
   private:
-    using CMHashMap = Hashmap<std::string, CounterMap, StringHashFunctor>;
+    using CMHashMap = SimpleHashmap<std::string, CounterMap, StringHashFunctor>;
 
     // Spatial Resolution of heatmap
     double single_unit_width_;
