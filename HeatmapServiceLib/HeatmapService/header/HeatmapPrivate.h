@@ -12,18 +12,6 @@
 
 namespace heatmap_service
 {
-  struct CounterKeyMap
-  {
-    std::string *counter_key;
-    CounterMap *counter_map;
-  };
-
-  struct StringHashFunctor{
-    int operator()(const std::string& s) {
-      return s.length();
-    }
-  };
-
   class HeatmapPrivate
   {
   private:

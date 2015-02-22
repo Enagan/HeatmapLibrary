@@ -1,5 +1,6 @@
 #pragma once
 #include "SignedIndexVector.hpp"
+#include <memory>
 
 #include <boost\serialization\access.hpp>
 #include <boost\archive\binary_oarchive.hpp>
@@ -20,20 +21,17 @@ namespace heatmap_service
       KeyValPair(const KeyT& k, const ValT& v) : key(k), val(v) {}
       KeyValPair(const KeyValPair& copy) : key(copy.key), val(copy.val) {}
       KeyValPair& operator=(const KeyValPair& copy){
-        if (this != &copy)
-        {
+        if (this != &copy) {
           key = copy.key;
           val = copy.val;
         }
         return *this;
       }
-      ~KeyValPair(){}
 
       // Boost serialization methods
       friend class boost::serialization::access;
       template<class Archive>
-      void serialize(Archive &ar, const unsigned int version)
-      {
+      void serialize(Archive & ar, const unsigned int version) {
         ar & key;
         ar & val;
       }
