@@ -2,13 +2,13 @@
 // Heatmap.h: Inner declaration of the real Heatmap class
 // Written by: Pedro Engana (http://pedroengana.com) 
 ////////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 #include <string>
 
 #include "HeatmapServiceTypes.h"
 #include "CounterMap.hpp"
+#include "LinearSearchMap.hpp"
 
 namespace heatmap_service
 {
@@ -18,9 +18,17 @@ namespace heatmap_service
     CounterMap *counter_map;
   };
 
+  struct StringHashFunctor{
+    int operator()(const std::string& s) {
+      return s.length();
+    }
+  };
+
   class HeatmapPrivate
   {
   private:
+    using Map = LinearSearchMap<std::string, CounterMap>;
+
     // Spatial Resolution of heatmap
     double single_unit_width_;
     double single_unit_height_;
@@ -29,8 +37,7 @@ namespace heatmap_service
     // This method of storing CounterKeys isn't the most well performing structure requiring traversal for access
     // But I assume that on a regular use of the Heatmap, not too many different counters will be used (maybe 10, 20 at most?)
     // As such, I believe the performance isn't sufficiently significant to justify a more complex structure
-    CounterKeyMap *key_map_dictionary_;
-    int key_map_dictionary_length_;
+    Map key_map_hash_;
 
   public:
     // Spatial resolution initialization
@@ -71,17 +78,7 @@ namespace heatmap_service
     // Adjust regular world space coordinates to the inner spatial resolution
     HeatmapCoordinate AdjustCoordsToSpatialResolution(HeatmapCoordinate coords) const;
 
-    // Looks if the counter exists, if yes, returns its Counter map, if not, a new Counter map is created and returned
-    CounterMap* getMapForCounter(const std::string &counter_key) const;
-    // Adds new counter maps to the heatmap
-    CounterKeyMap addNewCounter(const std::string &counter_key);
-    // Looks if the counter exists, if yes, returns its Counter map, if not, a new Counter map is created and returned
-    CounterMap* getOrAddMapForCounter(const std::string &counter_key);
-
     // Inner implementation of get counter inside rect. Receives already adjusted coordinates, called by public methods
     bool getCounterDataInsideAdjustedRect(HeatmapCoordinate adjusted_lower_left, HeatmapCoordinate adjusted_upper_right, const std::string &counter_key, HeatmapData &out_data) const;
-
-    // Cleans the heatmap, deleting all counter maps and freeing memory
-    void DestroyHeatmap();
   };
 }
