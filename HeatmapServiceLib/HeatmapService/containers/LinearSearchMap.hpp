@@ -58,7 +58,10 @@ namespace heatmap_service
     }
 
     bool has_key(const KeyT& key) const {
-      return map_.get_at(HashFunc()(key)).size() != 0;
+      for (KeyValPair& key_val : map_){
+        if (key_val.key == key) return true;
+      }
+      return false;
     }
 
     void clear(){ map_.clear(); }
@@ -67,13 +70,19 @@ namespace heatmap_service
   private:
 
     ValT& GetOrCreateValForKey(const KeyT& key){
-      return ValT();
+      for (KeyValPair& key_val : map_){
+        if (key_val.key == key) return key_val.val;
+      }
+
+      map_.push_back(KeyValPair(key, ValT()));
+      return *(map_.end() - 1).val;
     }
 
     const ValT& GetValForKey(const KeyT& key) const{
-      if (!has_key(key))
-        throw std::out_of_range("LinearSearchMap ERROR: Call to const operator[] with inexistant key");
-
+      for (KeyValPair& key_val : map_){
+        if (key_val.key == key) return key_val.val;
+      }
+      throw std::out_of_range("LinearSearchMap ERROR: Call to const operator[] with inexistant key");
     }
 
 
