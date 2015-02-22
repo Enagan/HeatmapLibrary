@@ -16,8 +16,8 @@ namespace heatmap_service
       KeyT key;
       ValT val;
 
-      KeyValPair() : key(KeyT()), val(ValT()) {}
-      KeyValPair(KeyT k, ValT v) : key(k), val(v) {}
+      KeyValPair() {}
+      KeyValPair(const KeyT& k, const ValT& v) : key(k), val(v) {}
       KeyValPair(const KeyValPair& copy) : key(copy.key), val(copy.val) {}
       KeyValPair& operator=(const KeyValPair& copy){
         if (this != &copy)
@@ -27,6 +27,7 @@ namespace heatmap_service
         }
         return *this;
       }
+      ~KeyValPair(){}
 
       // Boost serialization methods
       friend class boost::serialization::access;
@@ -58,7 +59,7 @@ namespace heatmap_service
     }
 
     bool has_key(const KeyT& key) const {
-      for (KeyValPair& key_val : map_){
+      for (const KeyValPair& key_val : map_){
         if (key_val.key == key) return true;
       }
       return false;
@@ -75,11 +76,11 @@ namespace heatmap_service
       }
 
       map_.push_back(KeyValPair(key, ValT()));
-      return *(map_.end() - 1).val;
+      return (map_.end() - 1)->val;
     }
 
     const ValT& GetValForKey(const KeyT& key) const{
-      for (KeyValPair& key_val : map_){
+      for (const KeyValPair& key_val : map_){
         if (key_val.key == key) return key_val.val;
       }
       throw std::out_of_range("LinearSearchMap ERROR: Call to const operator[] with inexistant key");

@@ -29,13 +29,13 @@ namespace heatmap_service
 
     explicit SignedIndexVector(siv_size pre_allocate, const T& initialize_with = T()){ create(pre_allocate, initialize_with); }
 
-    SignedIndexVector(const SignedIndexVector& copy) { create(copy.cbegin(), copy.cend(), copy.cindex_zero()); }
+    SignedIndexVector(const SignedIndexVector& copy) { create(copy.begin(), copy.end(), copy.index_zero()); }
 
     SignedIndexVector& operator=(const SignedIndexVector& copy) {
       if (this != &copy)
       {
         destroy();
-        create(copy.cbegin(), copy.cend(), copy.cindex_zero());
+        create(copy.begin(), copy.end(), copy.index_zero());
       }
       return *this;
     }
@@ -43,13 +43,13 @@ namespace heatmap_service
     ~SignedIndexVector(){ destroy(); }
 
     iterator begin(){ return begin_; }
-    const_iterator cbegin() const { return begin_; }
+    const_iterator begin() const { return begin_; }
 
     iterator index_zero(){ return index_zero_; }
-    const_iterator cindex_zero() const { return index_zero_; }
+    const_iterator index_zero() const { return index_zero_; }
 
     iterator end(){ return end_; }
-    const_iterator cend() const { return end_; }
+    const_iterator end() const { return end_; }
 
     int lowest_index() const { return begin_ - index_zero_; }
     siv_size size() const { return end_ - begin_; }
