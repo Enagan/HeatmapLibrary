@@ -8,14 +8,25 @@
 
 #include "HeatmapServiceTypes.h"
 #include "CounterMap.hpp"
+
 #include "LinearSearchMap.hpp"
+#include "HashMap.hpp"
 
 namespace heatmap_service
 {
   class HeatmapPrivate
   {
   private:
-    using Map = LinearSearchMap<std::string, CounterMap>;
+
+    struct HashFunFunctor
+    {
+      int operator()(const std::string& s){
+        return s.length();
+      }
+    };
+
+    //using Map = LinearSearchMap<std::string, CounterMap>;
+    using Map = SimpleHashmap<std::string, CounterMap, HashFunFunctor>;
 
     // Spatial Resolution of heatmap
     double single_unit_width_;
@@ -25,7 +36,7 @@ namespace heatmap_service
     // This method of storing CounterKeys isn't the most well performing structure requiring traversal for access
     // But I assume that on a regular use of the Heatmap, not too many different counters will be used (maybe 10, 20 at most?)
     // As such, I believe the performance isn't sufficiently significant to justify a more complex structure
-    Map key_map_hash_;
+    Map key_map_;
 
   public:
     // Spatial resolution initialization

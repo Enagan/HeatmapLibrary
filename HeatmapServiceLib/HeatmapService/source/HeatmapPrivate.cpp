@@ -17,19 +17,19 @@ namespace heatmap_service
   // Spatial resolution initialization
   HeatmapPrivate::HeatmapPrivate() : single_unit_width_(1), single_unit_height_(1) {}
 
-  HeatmapPrivate::HeatmapPrivate(double smallest_spatial_unit_size) : single_unit_width_(smallest_spatial_unit_size > 0 ? smallest_spatial_unit_size : 1),
+  HeatmapPrivate::HeatmapPrivate(double smallest_spatial_unit_size) : single_unit_width_(smallest_spatial_unit_size > 0 ? smallest_spatial_unit_size : 1), 
     single_unit_height_(smallest_spatial_unit_size > 0 ? smallest_spatial_unit_size : 1){}
 
-  HeatmapPrivate::HeatmapPrivate(double smallest_spatial_unit_width, double smallest_spatial_unit_height) :
+  HeatmapPrivate::HeatmapPrivate(double smallest_spatial_unit_width, double smallest_spatial_unit_height) : 
     single_unit_width_(smallest_spatial_unit_width > 0 ? smallest_spatial_unit_width : 1), single_unit_height_(smallest_spatial_unit_height > 0 ? smallest_spatial_unit_height : 1){}
 
-  HeatmapPrivate::HeatmapPrivate(const HeatmapPrivate& copy) : single_unit_width_(copy.single_unit_width_), single_unit_height_(copy.single_unit_height_),
-    key_map_hash_(copy.key_map_hash_) {}
+  HeatmapPrivate::HeatmapPrivate(const HeatmapPrivate& copy) : single_unit_width_(copy.single_unit_width_), single_unit_height_(copy.single_unit_height_), 
+    key_map_(copy.key_map_) {}
 
   HeatmapPrivate& HeatmapPrivate::operator=(const HeatmapPrivate& copy)
   {
     if (this != &copy)
-      key_map_hash_ = copy.key_map_hash_;
+      key_map_ = copy.key_map_;
     return *this;
   }
 
@@ -49,7 +49,7 @@ namespace heatmap_service
   // Queries if a certain counter has ever been added to the heatmap
   bool HeatmapPrivate::hasMapForCounter(const std::string& counter_key) const
   {
-    return key_map_hash_.has_key(counter_key);
+    return key_map_.has_key(counter_key);
   }
 
   // -- Heatmap activity logging methods
@@ -61,7 +61,7 @@ namespace heatmap_service
   bool HeatmapPrivate::IncrementMapCounterByAmount(HeatmapCoordinate coords, const std::string &counter_key, int add_amount)
   {
     HeatmapCoordinate adjusted_coords = AdjustCoordsToSpatialResolution(coords);
-    return key_map_hash_[counter_key].AddAmountAt((int)adjusted_coords.x, (int)adjusted_coords.y, add_amount);
+    return key_map_[counter_key].AddAmountAt((int)adjusted_coords.x, (int)adjusted_coords.y, add_amount);
   }
 
   bool HeatmapPrivate::IncrementMultipleMapCountersByAmount(HeatmapCoordinate coords, const std::string counter_keys[], int amounts[], int counter_keys_length)
@@ -81,7 +81,7 @@ namespace heatmap_service
       return 0;
 
     HeatmapCoordinate adjusted_coords = AdjustCoordsToSpatialResolution(coords);
-    return key_map_hash_[counter_key].getValueAt((int)adjusted_coords.x, (int)adjusted_coords.y);
+    return key_map_[counter_key].getValueAt((int)adjusted_coords.x, (int)adjusted_coords.y);
   }
 
   bool HeatmapPrivate::getCounterDataInsideRect(HeatmapCoordinate lower_left, HeatmapCoordinate upper_right, const std::string &counter_key, HeatmapData &out_data) const
@@ -101,10 +101,10 @@ namespace heatmap_service
     if (!hasMapForCounter(counter_key))
       return false;
 
-    const CounterMap& map_for_counter = key_map_hash_[counter_key];
+    const CounterMap& map_for_counter = key_map_[counter_key];
 
     return getCounterDataInsideAdjustedRect({ map_for_counter.lowest_coord_x(), map_for_counter.lowest_coord_y() },
-    { map_for_counter.highest_coord_x(), map_for_counter.highest_coord_y() }, counter_key, out_data);
+                                            { map_for_counter.highest_coord_x(), map_for_counter.highest_coord_y() }, counter_key, out_data);
   }
 
   // -- Heatmap serialization
@@ -120,7 +120,7 @@ namespace heatmap_service
     oa << single_unit_width_;
     oa << single_unit_height_;
 
-    oa & key_map_hash_;
+    oa & key_map_;
 
     // flush when done writting
     stream.flush();
@@ -139,7 +139,7 @@ namespace heatmap_service
   bool HeatmapPrivate::DeserializeHeatmap(const char* &in_buffer, int in_length)
   {
     // Cleans current heatmap, so that the serialized data can be loaded while avoiding memory leaks
-    key_map_hash_.clean();
+    key_map_.clean();
 
     // Wrap char* buffer inside a stream to read from
     boost::iostreams::basic_array_source<char> buffer_source(in_buffer, in_length);
@@ -149,7 +149,7 @@ namespace heatmap_service
     // Read serialized values from buffer
     ia >> single_unit_width_;
     ia >> single_unit_height_;
-    ia & key_map_hash_;
+    ia & key_map_;
 
     return true;
   }
@@ -158,7 +158,7 @@ namespace heatmap_service
   // Adjust regular world space coordinates to the inner spatial resolution
   HeatmapCoordinate HeatmapPrivate::AdjustCoordsToSpatialResolution(HeatmapCoordinate coords) const
   {
-    return{ floor(coords.x / single_unit_width_), floor(coords.y / single_unit_height_) };
+    return { floor(coords.x / single_unit_width_), floor(coords.y / single_unit_height_) };
   }
 
   // Inner implementation of get counter inside rect. Receives already adjusted coordinates
@@ -169,7 +169,7 @@ namespace heatmap_service
     if (!hasMapForCounter(counter_key) || adjusted_lower_left.x > adjusted_upper_right.x || adjusted_lower_left.y > adjusted_upper_right.y)
       return false;
 
-    const CounterMap& map_for_counter = key_map_hash_[counter_key];
+    const CounterMap& map_for_counter = key_map_[counter_key];
 
     int width = (int)adjusted_upper_right.x - (int)adjusted_lower_left.x + 1;
     int height = (int)adjusted_upper_right.y - (int)adjusted_lower_left.y + 1;
