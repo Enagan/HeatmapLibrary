@@ -56,8 +56,8 @@ namespace heatmap_service
     siv_size allocation_size() const { return mem_end_ - mem_begin_; }
 
     T& operator[](int index){
-      while (index_zero_ + index >= mem_end_ || index_zero_ + index <= mem_begin_)
-        grow();
+      if (index_zero_ + index >= mem_end_ || index_zero_ + index <= mem_begin_)
+        grow((abs(index) + 2 )* 2);
 
       if (index + index_zero_ >= end_ || index + index_zero_ <= begin_)
         initialize_to_index(index);
@@ -80,16 +80,16 @@ namespace heatmap_service
     }
 
     void push_back(const T& value){
-      while (end_ == mem_end_)
-        grow();
+      if (end_ == mem_end_)
+        grow( (siv_size)((mem_end_ - mem_begin_)*1.5) );
 
       std::uninitialized_fill(end_, end_ + 1, value);
       ++end_;
     }
 
     void push_front(const T& value){
-      while (begin_ == mem_begin_)
-        grow();
+      if (begin_ == mem_begin_)
+        grow( (siv_size)((mem_end_ - mem_begin_)*1.5) );
 
       std::uninitialized_fill(begin_ - 1, begin_, value);
       --begin_;
@@ -152,12 +152,17 @@ namespace heatmap_service
       }
     }
 
-    void grow(){
+    void grow(siv_size needed_size = 0){
+      siv_size curr_size = size();
       siv_size new_size = (siv_size)((mem_end_ - mem_begin_)*1.5 > 2 ? (mem_end_ - mem_begin_)*1.5 : 2);
+      while (new_size < needed_size)
+        new_size = (siv_size)(new_size*1.5);
+
       iterator new_mem_begin = alloc.allocate(new_size);
 
       iterator new_index_zero = new_mem_begin + new_size / 2;
       iterator new_begin = new_index_zero + lowest_index();
+      siv_size mem_b_to_b = new_begin - new_mem_begin;
       iterator new_end = begin_ ? std::uninitialized_copy(begin_, end_, new_begin) : new_begin;
 
       destroy();
