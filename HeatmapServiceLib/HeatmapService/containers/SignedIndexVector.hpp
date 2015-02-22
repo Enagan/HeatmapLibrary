@@ -66,11 +66,8 @@ namespace heatmap_service
     }
 
     const T& operator[] (int index) const {
-      while (index_zero_ + index >= mem_end_ || index_zero_ + index <= mem_begin_)
-        grow();
-
-      if (index + index_zero_ >= end_ || index + index_zero_ <= begin_)
-        initialize_to_index(index);
+      if (index + index_zero_ >= end_ || index + index_zero_ < begin_)
+        throw std::out_of_range("Signed Index Vector Error: const operator[], index out of range");
 
       return *(index + index_zero_);
     }
@@ -156,7 +153,7 @@ namespace heatmap_service
     }
 
     void grow(){
-      siv_size new_size = (siv_size)((mem_end_ - mem_begin_)*1.5 > 0 ? (mem_end_ - mem_begin_)*1.5 : 2);
+      siv_size new_size = (siv_size)((mem_end_ - mem_begin_)*1.5 > 2 ? (mem_end_ - mem_begin_)*1.5 : 2);
       iterator new_mem_begin = alloc.allocate(new_size);
 
       iterator new_index_zero = new_mem_begin + new_size / 2;

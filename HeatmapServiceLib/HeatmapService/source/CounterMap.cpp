@@ -8,7 +8,7 @@
 
 namespace heatmap_service
 {
-  CounterMap::CounterMap() { }
+  CounterMap::CounterMap() : lowest_coord_x_(0), highest_coord_x_(0), lowest_coord_y_(0), highest_coord_y_(0) { }
   CounterMap::CounterMap(const CounterMap& copy) : lowest_coord_x_(copy.lowest_coord_x_), highest_coord_x_(copy.highest_coord_x_),
     lowest_coord_y_(copy.lowest_coord_y_), highest_coord_y_(copy.highest_coord_y_), coord_matrix_(copy.coord_matrix_) { }
   CounterMap& CounterMap::operator=(const CounterMap& copy)
