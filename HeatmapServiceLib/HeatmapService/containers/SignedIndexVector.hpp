@@ -59,7 +59,7 @@ namespace heatmap_service
       if (index_zero_ + index >= mem_end_ || index_zero_ + index <= mem_begin_)
         grow((abs(index) + 2 )* 2);
 
-      if (index + index_zero_ >= end_ || index + index_zero_ <= begin_)
+      if (index + index_zero_ >= end_ || index + index_zero_ < begin_)
         initialize_to_index(index);
 
       return *(index + index_zero_);

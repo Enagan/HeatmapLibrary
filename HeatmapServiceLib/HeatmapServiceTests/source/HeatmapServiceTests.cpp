@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
   RunStressTests();
   
   cout << endl << "... Tests Finished, Press Enter to close ..." << endl;
-  //cin.get();
+  cin.get();
 
 	return 0;
 }
