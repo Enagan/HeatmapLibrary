@@ -130,11 +130,11 @@ int main(int argc, char* argv[])
   testVec[10] = 5;
 
 
-  RunUnitTests();
+  //RunUnitTests();
   RunStressTests();
   
   cout << endl << "... Tests Finished, Press Enter to close ..." << endl;
-  cin.get();
+  //cin.get();
 
 	return 0;
 }

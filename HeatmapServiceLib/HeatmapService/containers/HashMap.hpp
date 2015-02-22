@@ -4,6 +4,7 @@
 #include <limits>
 #include <functional>
 #include <exception>
+#include <memory>
 
 #include <boost\serialization\access.hpp>
 #include <boost\archive\binary_oarchive.hpp>
@@ -17,11 +18,11 @@ namespace heatmap_service
   private:
 
     struct KeyValPair{
-      KeyT key;
-      ValT val;
+      std::shared_ptr<KeyT> key;
+      std::shared_ptr<ValT> val;
 
-      KeyValPair() : key(KeyT()), val(ValT()) {}
-      KeyValPair(KeyT k, ValT v) : key(k), val(v) {}
+      KeyValPair() {}
+      KeyValPair(KeyT k, ValT v) : key(new KeyT(k)), val(new ValT(v)) {}
       KeyValPair(const KeyValPair& copy) : key(copy.key), val(copy.val) {}
       KeyValPair& operator=(const KeyValPair& copy){
         if (this != &copy)
@@ -35,11 +36,24 @@ namespace heatmap_service
       // Boost serialization methods
       friend class boost::serialization::access;
       template<class Archive>
-      void serialize(Archive &ar, const unsigned int version)
+      void save(Archive & ar, const unsigned int version) const
       {
-        ar & key;
-        ar & val;
+        ar & *key;
+        ar & *val;
       }
+      template<class Archive>
+      void load(Archive & ar, const unsigned int version)
+      {
+        KeyT read_key;
+        ValT read_val;
+
+        ar & read_key;
+        ar & read_val;
+
+        key = std::shared_ptr<KeyT>( new KeyT(read_key) );
+        val = std::shared_ptr<ValT>( new ValT(read_val) );
+      }
+      BOOST_SERIALIZATION_SPLIT_MEMBER()
     };
 
     SignedIndexVector< SignedIndexVector<KeyValPair> > map_;
@@ -76,19 +90,19 @@ namespace heatmap_service
       if (hash_box.size() == 0)
       {
         hash_box.push_back(KeyValPair(key, ValT()));
-        return hash_box[0].val;
+        return *(hash_box[0].val);
       }
       else if (hash_box.size() == 1){
-        return hash_box[0].val;
+        return *(hash_box[0].val);
       }
       else {
         SignedIndexVector<KeyValPair>::iterator elem = std::find_if(hash_box.begin(),
-          hash_box.end(), [&key](const KeyValPair& pair) -> bool { return pair.key == key; });
+          hash_box.end(), [&key](const KeyValPair& pair) -> bool { return *(pair.key) == key; });
         if (elem != hash_box.end())
-          return (*elem).val;
+          return *(elem->val);
 
         hash_box.push_back(KeyValPair(key, ValT()));
-        return (hash_box.end() - 1)->val;
+        return *((hash_box.end() - 1)->val);
       }
     }
 
@@ -99,12 +113,12 @@ namespace heatmap_service
       int hash_result = HashFunc()(key);
       const SignedIndexVector<KeyValPair>& hash_box = map_[hash_result];
       if (hash_box.size() == 1)
-        return hash_box[0].val;
+        return *(hash_box[0].val);
 
       SignedIndexVector<KeyValPair>::const_iterator elem = std::find_if(hash_box.cbegin(),
-        hash_box.cend(), [&key](const KeyValPair& pair) -> bool { return pair.key == key; });
+        hash_box.cend(), [&key](const KeyValPair& pair) -> bool { return *(pair.key) == key; });
       if (elem != hash_box.cend())
-        return elem->val;
+        return *(elem->val);
       else
         throw std::out_of_range("Hashmap ERROR: Call to const operator[] with inexistant key");
     }
