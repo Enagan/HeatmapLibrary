@@ -105,7 +105,7 @@ namespace heatmap_service
 
     // Get_at works similarly to const operator[], but it returns a default value of T instead of an 
     // out-of-range when non-existent indexes are queried. Usefull to keep the "seemingly infinite" abstraction
-    T get_at(int index) const {
+    const T get_at(int index) const {
       if (index + index_zero_ >= end_ || index + index_zero_ < begin_)
         return T();
 
@@ -179,6 +179,7 @@ namespace heatmap_service
     }
 
     // Initializes memory to init_value. Used to guarantee no gaps between initialized memory
+    // Initializes forward, or backwards, depeding if the index is above end_ or bellow begin_
     void initialize_to_index(int index, const T& init_value = T()){
       if (index + index_zero_ >= end_) {
         std::uninitialized_fill(end_, index_zero_ + index + 1, init_value);
@@ -199,15 +200,20 @@ namespace heatmap_service
       while (new_size < needed_size)
         new_size = (siv_size)(new_size*1.5);
 
+      // allocate new memory
       iterator new_mem_begin = alloc.allocate(new_size);
 
+      // create all new iterator values pointing to new allocation
       iterator new_index_zero = new_mem_begin + new_size / 2;
       iterator new_begin = new_index_zero + lowest_index();
       siv_size mem_b_to_b = new_begin - new_mem_begin;
+      // copy values from current memory to new allocation
       iterator new_end = begin_ ? std::uninitialized_copy(begin_, end_, new_begin) : new_begin;
 
+      // free current memory
       destroy();
 
+      // direct iterators to newly alocated memory
       mem_begin_ = new_mem_begin;
       begin_ = new_begin;
       index_zero_ = new_index_zero;
