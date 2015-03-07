@@ -148,23 +148,25 @@ namespace heatmap_service
 
   private:
     void create(){ mem_begin_ = begin_ = index_zero_ = end_ = mem_end_ = nullptr; }
+    // Allocates uninitialized memory of the requested size
     void create(siv_size size, const T& init_value = T()){
       begin_ = mem_begin_ = alloc.allocate(size);
       index_zero_ = begin_ + size / 2;
       end_ = mem_end_ = begin_ + size;
       std::uninitialized_fill(begin_, mem_end_, init_value);
     }
+    // Allocates and initializes memory copying contents from [begin, end[
     void create(const_iterator begin, const_iterator end, const_iterator zero_index){
       if (begin == end){
         create();
         return;
       }
-
       siv_size dist_to_zero = zero_index - begin;
       begin_ = mem_begin_ = alloc.allocate(end - begin);
       index_zero_ = begin_ + dist_to_zero;
       end_ = mem_end_ = std::uninitialized_copy(begin, end, begin_);
     }
+
     void destroy(){
       if (begin_) {
         iterator it = end_;
@@ -173,10 +175,10 @@ namespace heatmap_service
 
         alloc.deallocate(mem_begin_, mem_end_ - mem_begin_);
       }
-
       mem_begin_ = begin_ = index_zero_ = end_ = mem_end_ = nullptr;
     }
 
+    // Initializes memory to init_value. Used to guarantee no gaps between initialized memory
     void initialize_to_index(int index, const T& init_value = T()){
       if (index + index_zero_ >= end_) {
         std::uninitialized_fill(end_, index_zero_ + index + 1, init_value);
@@ -188,9 +190,12 @@ namespace heatmap_service
       }
     }
 
+    // Reallocates memory to fit a new needed size
     void grow(siv_size needed_size = 0){
       siv_size curr_size = allocation_size();
       siv_size new_size = (siv_size)((mem_end_ - mem_begin_)*1.5 > 2 ? (mem_end_ - mem_begin_)*1.5 : 2);
+
+      // Grows "new_size" by 1.5 until we reach a size that can fit our needs
       while (new_size < needed_size)
         new_size = (siv_size)(new_size*1.5);
 

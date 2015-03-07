@@ -1,44 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="HeatmapService.h" />
-    <ClInclude Include="header\HeatmapPrivate.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="HeatmapServiceTypes.h" />
-    <ClInclude Include="header\CounterMap.hpp">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="containers\SignedIndexVector.hpp">
-      <Filter>containers</Filter>
-    </ClInclude>
-    <ClInclude Include="containers\HashMap.hpp">
-      <Filter>containers</Filter>
-    </ClInclude>
-    <ClInclude Include="containers\LinearSearchMap.hpp">
-      <Filter>containers</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="source">
-      <UniqueIdentifier>{084a5c64-7396-4e55-b63f-212fd99f91f9}</UniqueIdentifier>
+    <Filter Include="heatmap_public">
+      <UniqueIdentifier>{f9d54ef1-8ac2-44a6-b47b-cb5f8e58cd38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="header">
-      <UniqueIdentifier>{f2adc06c-fff2-46ff-84d6-90480ee61a71}</UniqueIdentifier>
+    <Filter Include="heatmap_internal">
+      <UniqueIdentifier>{147ec8c5-37a5-423a-a56a-c3bcd3315195}</UniqueIdentifier>
     </Filter>
-    <Filter Include="containers">
-      <UniqueIdentifier>{0e31261e-f82e-4571-a143-0e20bac74d16}</UniqueIdentifier>
+    <Filter Include="custom_containers">
+      <UniqueIdentifier>{a1fce7a3-506a-4b5a-aa1f-57bbb2591513}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\HeatmapService.cpp">
-      <Filter>source</Filter>
+    <ClCompile Include="source\heatmap_public\HeatmapService.cpp">
+      <Filter>heatmap_public</Filter>
     </ClCompile>
-    <ClCompile Include="source\CounterMap.cpp">
-      <Filter>source</Filter>
+    <ClCompile Include="source\heatmap_internal\CounterMap.cpp">
+      <Filter>heatmap_internal</Filter>
     </ClCompile>
-    <ClCompile Include="source\HeatmapPrivate.cpp">
-      <Filter>source</Filter>
+    <ClCompile Include="source\heatmap_internal\HeatmapPrivate.cpp">
+      <Filter>heatmap_internal</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\heatmap_public\HeatmapService.h">
+      <Filter>heatmap_public</Filter>
+    </ClInclude>
+    <ClInclude Include="source\heatmap_public\HeatmapServiceTypes.h">
+      <Filter>heatmap_public</Filter>
+    </ClInclude>
+    <ClInclude Include="source\heatmap_internal\CounterMap.hpp">
+      <Filter>heatmap_internal</Filter>
+    </ClInclude>
+    <ClInclude Include="source\heatmap_internal\HeatmapPrivate.h">
+      <Filter>heatmap_internal</Filter>
+    </ClInclude>
+    <ClInclude Include="source\custom_containers\HashMap.hpp">
+      <Filter>custom_containers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\custom_containers\LinearSearchMap.hpp">
+      <Filter>custom_containers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\custom_containers\SignedIndexVector.hpp">
+      <Filter>custom_containers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
