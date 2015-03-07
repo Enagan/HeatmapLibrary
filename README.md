@@ -1,7 +1,7 @@
 -------------------------------------------------------
                Heatmap Service Library                 
-   Written by: Pedro Engana (http://pedroengana.com)   
 -------------------------------------------------------
+Written by: Pedro Engana (http://pedroengana.com)   
 
 The HeatmapService library provides a robust and easy to use tool to log player activity spatially organized over 2d space.
 It can log any counters on a coordinate basis to measure activity, such as deaths, gold collected, materials gathered, etc...
