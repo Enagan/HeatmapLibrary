@@ -1,7 +1,7 @@
-///////////////////////////////////////////////////////
-//             Heatmap Service Library               //
-// Written by: Pedro Engana (http://pedroengana.com) //
-///////////////////////////////////////////////////////
+-------------------------------------------------------
+               Heatmap Service Library                 
+   Written by: Pedro Engana (http://pedroengana.com)   
+-------------------------------------------------------
 
 The HeatmapService library provides a robust and easy to use tool to log player activity spatially organized over 2d space.
 It can log any counters on a coordinate basis to measure activity, such as deaths, gold collected, materials gathered, etc...
@@ -11,17 +11,17 @@ It can also serialize itself to a char* buffer and can later restored from the s
 It comes with a simple console application for testing purposes.
 
 
-///////////////////////////////////
-////// Running the lib tests //////
-///////////////////////////////////
+---------------------------------
+     Running the lib tests  
+---------------------------------
 
 1. Open the .sln file (HeatmapServiceLib.sln) with a Visual Studio that supports Format Version 12.00
 2. Build or Rebuild HeatmapServiceTests (this will also build the lib itself)
 3. Run, and watch the automated tests results
 
-///////////////////////////////
-////// Solution Overview //////
-///////////////////////////////
+-------------------------------
+       Solution Overview 
+-------------------------------
 
 The Heatmap Service Lib is constituted of 3 main components:
 
@@ -42,9 +42,9 @@ The counter map instances a matrix of values, but not the whole matrix. Each col
 This however is not the whole truth. Allocation operations are expensive, and the map shouldn't be doing them all the time, if coordinates were logged from 0,0 outwards it would constantly re-allocate itself. Instead of allocating exactly the memory needed, the column is always doubled in size. With this I hope to quickly reach a size that can contain the map. I figured that even if I don't know the initial size, if I quickly grow the map, I will eventually stabilize at a size that can contain all possible future registries. The source map where the logs are coming from is very unlikely to change size overtime. This has a bit of a memory hit, as more likely than not more memory will be allocated than actually needed, but I felt it was justified.
 
 
-///////////////////
-////// Usage //////
-///////////////////
+-------------------
+       Usage      
+-------------------
 
 - Registering values:
 To register values to the heatmap, the Increment methods should be called. A coordinate should be passed (any two double values, x and y. The heatmap supports both negative coordinates as well as fractional) as well as the key for the counter to register to, counter keys must be references to const std::strings.
@@ -58,9 +58,9 @@ Queries can also be made in an area of the map, for this a rectangle must be pro
 The Heatmap can serialize itself to a char array, and later recovered from the same data. The library uses boost for serialization purposes, but writes the stream to the char array ensuring any application that uses the lib, doesn't need to use boost serialization itself. The required boost libraries are, of course, bundled with this project to ensure it works properly.
 
 
-/////////////////////////////////////////////////////
-////// Discussion on Assumptions and Decisions //////
-/////////////////////////////////////////////////////
+-----------------------------------------------------
+       Discussion on Assumptions and Decisions
+-----------------------------------------------------
 In this section I'll document and discuss some of my design decisions.
 
 - The Pimpl Idiom as a way to occlude private library info:
@@ -86,9 +86,9 @@ Serialization can be quite tricky, and there's already a bunch of very good libr
 I pondered for a while If I should make the Heatmap thread safe or not. In the end, I decided against it. Even though it would be a nice to have feature, it shouldn't be it's default responsibility to make itself thread safe, instead, the software that uses the lib should take care not to do parallel calls. A thread safe extension to the heatmap could perhaps make sense.
 
 
-////////////////////////////////////
-////// Future Work & What-ifs //////
-////////////////////////////////////
+--------------------------------
+     Future Work & What-ifs
+--------------------------------
 Stuff I would develop for this heatmap in the future, but didn't make sense to develop now.
 Also know as: "where feature creep goes to die".
 
