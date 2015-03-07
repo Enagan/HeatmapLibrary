@@ -20,7 +20,7 @@ It comes with a simple console application for testing purposes.
 3. Run, and watch the automated tests results
 
 -------------------------------
-       Solution Overview 
+       Solution Overview   
 -------------------------------
 
 The Heatmap Service Lib is constituted of 3 main components:
