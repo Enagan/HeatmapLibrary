@@ -35,13 +35,13 @@
     <ClInclude Include="source\heatmap_internal\HeatmapPrivate.h">
       <Filter>heatmap_internal</Filter>
     </ClInclude>
-    <ClInclude Include="source\custom_containers\HashMap.hpp">
-      <Filter>custom_containers</Filter>
-    </ClInclude>
     <ClInclude Include="source\custom_containers\LinearSearchMap.hpp">
       <Filter>custom_containers</Filter>
     </ClInclude>
     <ClInclude Include="source\custom_containers\SignedIndexVector.hpp">
+      <Filter>custom_containers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\custom_containers\SimpleHashmap.hpp">
       <Filter>custom_containers</Filter>
     </ClInclude>
   </ItemGroup>

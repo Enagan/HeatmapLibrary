@@ -3,6 +3,7 @@
 // Written by: Pedro Engana (http://pedroengana.com) 
 ////////////////////////////////////////////////////////////////////////
 
+#include <iostream>
 #include "HeatmapService.h"
 #include "HeatmapPrivate.h"
 
@@ -90,5 +91,23 @@ namespace heatmap_service
   bool HeatmapService::DeserializeHeatmap(const char* &in_buffer, int in_length)
   {
     return private_heatmap_->DeserializeHeatmap(in_buffer, in_length);
+  }
+
+  // -- Utility Functions
+  // Since this is a static utility function with no bindings to internal implementations, it's defined outside of the pimpl idiom.
+  void HeatmapService::PrintHeatmapData(const heatmap_service::HeatmapData &data)
+  {
+    std::cout << std::endl << "---------------------------------------" << std::endl << std::endl;
+    for (int y = (int)data.data_size.height - 1; y >= 0; y--)
+    {
+      std::cout << (data.lower_left_coordinate.y + y)*data.spatial_resolution.height << "::";
+
+      for (int x = 0; x < data.data_size.width; x++)
+      {
+        std::cout << "  " << data.heatmap_data[x][y];
+      }
+      std::cout << std::endl;
+    }
+    std::cout << std::endl << "---------------------------------------" << std::endl;
   }
 }

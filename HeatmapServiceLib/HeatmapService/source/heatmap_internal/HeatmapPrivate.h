@@ -10,7 +10,7 @@
 #include "CounterMap.hpp"
 
 #include "LinearSearchMap.hpp"
-#include "HashMap.hpp"
+#include "SimpleHashmap.hpp"
 
 namespace heatmap_service
 {

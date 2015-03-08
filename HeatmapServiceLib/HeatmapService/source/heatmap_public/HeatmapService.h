@@ -78,6 +78,12 @@ namespace heatmap_service
     bool SerializeHeatmap(char* &out_buffer, int &out_length) const;
     bool DeserializeHeatmap(const char* &in_buffer, int in_length);
 
+
+    // -- Utility Functions
+    // PrintHeatmapData is a static method that receives a heatmap data object and prints it's contents to the standard output.
+    // Usefull to visually debug heatmap contents
+    static void PrintHeatmapData(const heatmap_service::HeatmapData &data);
+
   private:
     // Internal instance of the Heatmap. Use of the pimpl idiom to hide private and internal methods from the library header
     HeatmapPrivate* private_heatmap_;

@@ -16,7 +16,7 @@
     <ClCompile Include="source\heatmap_public\HeatmapService.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\custom_containers\HashMap.hpp" />
+    <ClInclude Include="source\custom_containers\SimpleHashmap.hpp" />
     <ClInclude Include="source\custom_containers\LinearSearchMap.hpp" />
     <ClInclude Include="source\custom_containers\SignedIndexVector.hpp" />
     <ClInclude Include="source\heatmap_internal\CounterMap.hpp" />

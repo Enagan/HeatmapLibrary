@@ -11,12 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\HeatmapServiceTests.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\HeatmapService\HeatmapService.vcxproj">
       <Project>{57bfdec9-83b8-4e81-bd2c-40ac8a6a48c3}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\HeatmapServiceTests.cpp" />
+    <ClCompile Include="source\tests\HeatmapStressTests.cpp" />
+    <ClCompile Include="source\tests\HeatmapTests.cpp" />
+    <ClCompile Include="source\tests\SignedIndexVectorTests.cpp" />
+    <ClCompile Include="source\tests\SimpleHashmapTests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\tests\HeatmapStressTests.h" />
+    <ClInclude Include="source\tests\HeatmapTests.h" />
+    <ClInclude Include="source\tests\SignedIndexVectorTests.h" />
+    <ClInclude Include="source\tests\SimpleHashmapTests.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E0F1BEDC-C750-4547-B3A4-AE2EE3808054}</ProjectGuid>
@@ -63,7 +73,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\HeatmapService/source/heatmap_public;$(SolutionDir)\HeatmapService/source/custom_containers;$(SolutionDir)\HeatmapService\external\boost_1_57_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\HeatmapServiceTests\source\tests;$(SolutionDir)\HeatmapService/source/heatmap_public;$(SolutionDir)\HeatmapService/source/custom_containers;$(SolutionDir)\HeatmapService\external\boost_1_57_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -81,7 +91,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\HeatmapService/source/heatmap_public;$(SolutionDir)\HeatmapService/source/custom_containers;$(SolutionDir)\HeatmapService\external\boost_1_57_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\HeatmapServiceTests\source\tests;$(SolutionDir)\HeatmapService/source/heatmap_public;$(SolutionDir)\HeatmapService/source/custom_containers;$(SolutionDir)\HeatmapService\external\boost_1_57_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
