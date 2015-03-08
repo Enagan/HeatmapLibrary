@@ -39,10 +39,9 @@ namespace heatmap_service
     bool hasMapForCounter(const std::string &counter_key) const;
 
     // -- Heatmap activity logging methods
-    // Incrementing or adding values to a counter in the heatmap is a simple as providing the coordinates and the counter key used (deaths, gold lost, etc...)
+    // Incrementing or adding values to a counter in the heatmap is as simple as providing the coordinates and the counter key used (deaths, gold lost, etc...)
     // The heatmap supports any values for coordinates, both positive and negative, as well as fractional. The map will grow as needed to accommodate.
     // In case the map growth reaches the limits of memory available for the process, these functions will write error logs to cout and return false. All previously logged data will still be available
-    // Counter keys can be passed both as a c string or an std::string depending on what is most comfortable for the programmer at the point these methods are called.
     bool IncrementMapCounter(HeatmapCoordinate coords, const std::string &counter_key);
 
     // Instead of simply incrementing by one, these functions allow the addition of any value to the counter, in case the provided value is zero or negative the counter won't be incremented
@@ -56,15 +55,14 @@ namespace heatmap_service
     // Similar to the logging methods, these fetch the heatmap values for any given counter. If data is requested from a counter that doesn't yet exist, or
     // if the provided coordinate was never previously logged, the return will be 0.
     // Querying a single coordinate inside a counter map has O(1) complexity, 
-    // (reaching the correct counter map is O(n), where n = amount of different counters. It's not expected that enough counters need to be logged for this to be a significant bottleneck, deeper discussion on the readme)
     // Querying an area, inside a counter map, will naturally have O(n) where n = width*height.
     unsigned int getCounterAtPosition(HeatmapCoordinate coords, const std::string &counter_key) const;
 
     // These methods fetch an area of the heatmap instead of a single point. The data is returned via the HeatmapData output parameter and the function returns true if successful.
-    // Its the responsibility of the function that calls this to destroy HeatmapData when it's no longer needs to be used
+    // Its the responsibility of the function that calls this to destroy HeatmapData when it no longer needs to be used
     bool getCounterDataInsideRect(HeatmapCoordinate lower_left, HeatmapCoordinate upper_right, const std::string &counter_key, HeatmapData &out_data) const;
 
-    // These method behaves similarly to the area queries, but returns the entirety of the currently registered map data for the given counter
+    // This method behaves similarly to the area queries, but returns the entirety of the currently registered map data for the given counter
     // The counter value for any coordinate outside the area returned by this function is 0
     bool getAllCounterData(const std::string &counter_key, HeatmapData &out_data) const;
 

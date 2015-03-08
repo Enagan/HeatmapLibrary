@@ -20,12 +20,12 @@
 namespace heatmap_service
 {
   // -- CounterMap Class is a helper class for the Heatmap, capable of holding the spatial counter data for the Heatmap it's part of.
-  // It doesn't need to know map size at instantiation, instead dinamically resizing itself to fit the needs of the Heatmap.
-  // It can resize specific columns independently of others, keeping memory footprint as low as possible.
+  // It doesn't need to know map size at instantiation, instead using the dinamically resizeable SignedIndexVector container to fit the needs of the Heatmap.
   // All accesses to the map are O(1) complexity. Incrementing is also O(1) except on situations where a resize is needed.
   class CounterMap
   {
   private:
+    // Signed index vector deals with most of our dynamic resizing needs as well as both positive and negative indexing
     SignedIndexVector< SignedIndexVector<uint32_t> > coord_matrix_;
 
     // Highest and lowest values currently present in the map. Usefull when querying about full size
@@ -47,7 +47,7 @@ namespace heatmap_service
 
     // -- Map registering methods
     // Increment the counters at the specified coordinates
-    // Grows map horizontally and vertically as necessessary to accomodate new data
+    // Map will grow horizontally and vertically as necessessary to accomodate new data
     bool IncrementValueAt(int coord_x, int coord_y);
     bool AddAmountAt(int coord_x, int coord_y, int amount);
 

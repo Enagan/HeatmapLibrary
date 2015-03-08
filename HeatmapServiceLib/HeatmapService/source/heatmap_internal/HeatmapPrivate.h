@@ -18,24 +18,28 @@ namespace heatmap_service
   {
   private:
 
-    struct HashFunFunctor
+    // Hashfunction for usage of the SimpleHashmap
+   /** struct HashFunFunctor
     {
       int operator()(const std::string& s){
-        return s.length();
+        int prime = 7;
+        for (const char& c : s)
+          prime = prime >> (int)c;
+        return prime;
       }
     };
-
-    //using Map = LinearSearchMap<std::string, CounterMap>;
     using Map = SimpleHashmap<std::string, CounterMap, HashFunFunctor>;
+    **/
 
+    // Using Linear Search map instead of the hashmap because, although the hashmap is more efficient for large amounts of different keys
+    // in this use case, on a regular use of the Heatmap, not too many different keys will be used (maybe 10, 20 at most?)
+    // As such, performance tests showed this simple map to be faster simply due to it's very low operational overhead
+    using Map = LinearSearchMap<std::string, CounterMap>;
+    
     // Spatial Resolution of heatmap
     double single_unit_width_;
     double single_unit_height_;
 
-    // We keep each CounterMap in an unordered array of KeyValues
-    // This method of storing CounterKeys isn't the most well performing structure requiring traversal for access
-    // But I assume that on a regular use of the Heatmap, not too many different counters will be used (maybe 10, 20 at most?)
-    // As such, I believe the performance isn't sufficiently significant to justify a more complex structure
     Map key_map_;
 
   public:
