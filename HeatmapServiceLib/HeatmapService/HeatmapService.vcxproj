@@ -11,17 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="containers\HashMap.hpp" />
-    <ClInclude Include="containers\SignedIndexVector.hpp" />
-    <ClInclude Include="header\CounterMap.hpp" />
-    <ClInclude Include="header\HeatmapPrivate.h" />
-    <ClInclude Include="HeatmapService.h" />
-    <ClInclude Include="HeatmapServiceTypes.h" />
+    <ClCompile Include="source\heatmap_internal\CounterMap.cpp" />
+    <ClCompile Include="source\heatmap_internal\HeatmapPrivate.cpp" />
+    <ClCompile Include="source\heatmap_public\HeatmapService.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\CounterMap.cpp" />
-    <ClCompile Include="source\HeatmapPrivate.cpp" />
-    <ClCompile Include="source\HeatmapService.cpp" />
+    <ClInclude Include="source\custom_containers\SimpleHashmap.hpp" />
+    <ClInclude Include="source\custom_containers\LinearSearchMap.hpp" />
+    <ClInclude Include="source\custom_containers\SignedIndexVector.hpp" />
+    <ClInclude Include="source\heatmap_internal\CounterMap.hpp" />
+    <ClInclude Include="source\heatmap_internal\HeatmapPrivate.h" />
+    <ClInclude Include="source\heatmap_public\HeatmapService.h" />
+    <ClInclude Include="source\heatmap_public\HeatmapServiceTypes.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{57BFDEC9-83B8-4E81-BD2C-40AC8A6A48C3}</ProjectGuid>
@@ -65,7 +66,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\header;$(ProjectDir)\containers;$(ProjectDir)\external\boost_1_57_0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\source\heatmap_public;$(ProjectDir)\source\heatmap_internal;$(ProjectDir)\source\custom_containers;$(ProjectDir)\external\boost_1_57_0</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -82,7 +83,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\header;$(ProjectDir)\external\boost_1_57_0</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\source\heatmap_public;$(ProjectDir)\source\heatmap_internal;$(ProjectDir)\source\custom_containers;$(ProjectDir)\external\boost_1_57_0</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
